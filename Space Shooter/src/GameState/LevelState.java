@@ -44,7 +44,7 @@ public class LevelState extends GameState {
 	double healthBarMaxWidth = 500;
 
 	int maxMeteor = 10;
-	public static int maxEnemy = 1;
+	public static int maxEnemy = 2;
 	public int score = 0;
 	public static int points = 0;
 	public static int time = 0;
@@ -104,7 +104,7 @@ public class LevelState extends GameState {
 			for(int i = 0; i < enemies.size(); i++){
 				Enemy e = enemies.get(i);
 				e.update();
-				if(e.isDead()){
+				if(e.dead){
 					enemies.remove(i);//If enemy died, remove it
 					i--;
 				}
@@ -155,11 +155,11 @@ public class LevelState extends GameState {
 
 			int enemyX = 100;
 
-			//while(enemyX > 0 && enemyX < Panel.WIDTH){enemyX = randInt(-worldLimitX, worldLimitX);}
+			while(enemyX > 0 && enemyX < Panel.WIDTH){enemyX = randInt(-worldLimitX, worldLimitX);}
 
 			int enemY = 100;
 
-			//while(enemY > 0 && enemY < Panel.HEIGHT){enemY = randInt(-worldLimitY, worldLimitY);}
+			while(enemY > 0 && enemY < Panel.HEIGHT){enemY = randInt(-worldLimitY, worldLimitY);}
 
 			enemy = new Enemy(randInt(1,7), enemyX, enemY, player);
 			enemies.add(enemy);

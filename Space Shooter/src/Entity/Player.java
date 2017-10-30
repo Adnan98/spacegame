@@ -19,6 +19,7 @@ public class Player {
 	double yPos = 300;
 	int width = 99;
 	int height = 75;
+	double scale = 0.8; 
 	double centerX;
 	double centerY;
 
@@ -241,7 +242,6 @@ public class Player {
 
 		AffineTransform at = AffineTransform.getTranslateInstance(xPos, yPos);
 		at.rotate(Math.toRadians(rotateDegrees), width/2, height/2);
-		at.scale(1.5, 1.5);
 		g2d.drawImage(image,at,null);
 
 
@@ -257,9 +257,8 @@ public class Player {
 			if(rp.contains(rb)){
 				//Only check for bullet collision if bullet is inside screen
 				if(rb.intersects(re)){
-					e.setDead();
+					e.getDamage(10);
 					bullets.remove(i);
-					LevelState.points += 500;
 					i--;
 				}
 			}

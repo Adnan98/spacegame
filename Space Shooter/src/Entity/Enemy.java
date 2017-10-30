@@ -17,27 +17,28 @@ public class Enemy {
 
 	BufferedImage image;
 
-	public int type, width ,height;
-	public double xPos, yPos;
-	public double playerX, playerY;
-	public double vx, vy;
-	Player player;
-	int dX;
-	int dY;
-	public double health;
-	public int damage;
-	public double scale;
+	public int type, width ,height, speed;
 
-	public double rotate;
+	public double 
+	xPos, yPos,
+	vx, vy, 
+	dx, dy,
+	health,
+	scale,
+	srotate;
+
 	public boolean dead;
+	Player player;
 
 	ArrayList<EnemyBullet> bullets;
 
 	public Enemy(int t, int x, int y, Player p){
+		player = p;
 		xPos = x;
 		yPos = y;
+		type = t;
 
-		switch (t){
+		switch (type){
 		case 1:
 			try {
 				image = ImageIO.read(getClass().getResource("/PNG/Ships/spaceShips_00"+type+".png"));
@@ -46,39 +47,32 @@ public class Enemy {
 			width = 106;
 			height =  80;
 			health = 10;
-			scale = 0.5;
-
-			vx = randInt(-15,15);
-			vy = randInt(-15,15);
-
+			scale = 0.4;
+			speed = randInt(10,14);
 			break;
 
 		case 2:
 			try {
-				image = ImageIO.read(getClass().getResource("/PNG/Enemies/spaceShips_00"+type+".png"));
+				image = ImageIO.read(getClass().getResource("/PNG/Ships/spaceShips_00"+type+".png"));
 			} catch (IOException e) {e.printStackTrace();}
 
 			width = 101;
 			height =  74;
 			health = 30;
-			scale = 1.0;
-			vx = randInt(-10,10);
-			vy = randInt(-10,10);
-
+			scale = 0.5;
+			speed = randInt(8,12);
 			break;
 
 		case 3:
 			try {
-				image = ImageIO.read(getClass().getResource("/PNG/Enemies/spaceShips_00"+type+".png"));
+				image = ImageIO.read(getClass().getResource("/PNG/Ships/spaceShips_00"+type+".png"));
 			} catch (IOException e) {e.printStackTrace();}	
 
 			width = 100;
 			height =  94;
 			health = 20;
-			scale = 0.8;
-			vx = randInt(-5,5);
-			vy = randInt(-5,5);
-
+			scale = 0.6;
+			speed = randInt(8,10);
 			break;
 
 		case 4:
@@ -89,10 +83,8 @@ public class Enemy {
 			width = 126;
 			height =  108;
 			health = 100;
-			scale = 1.5;
-			vx = randInt(-5,5);
-			vy = randInt(-5,5);
-
+			scale = 1.0;
+			speed = randInt(6,8);
 			break;
 
 		case 5:
@@ -104,9 +96,7 @@ public class Enemy {
 			height =  84;
 			health = 80;
 			scale = 1.2;
-			vx = randInt(-5,5);
-			vy = randInt(-5,5);
-
+			speed = randInt(4,6);
 			break;
 
 		case 6:
@@ -118,23 +108,19 @@ public class Enemy {
 			height =  148;
 			health = 90;
 			scale = 1.4;
-			vx = randInt(-5,5);
-			vy = randInt(-5,5);
-
+			speed = randInt(2,3);
 			break;
 
 		case 7:
 			try {
-				image = ImageIO.read(getClass().getResource("/PNG/Enemies/spaceShips_00"+type+".png"));
+				image = ImageIO.read(getClass().getResource("/PNG/Ships/spaceShips_00"+type+".png"));
 			} catch (IOException e) {e.printStackTrace();}	
 
 			width = 172;
 			height =  151;
 			health = 150;
 			scale = 2.0;
-			vx = randInt(-5,5);
-			vy = randInt(-5,5);
-
+			speed = 1;
 			break;
 
 		}
@@ -142,22 +128,41 @@ public class Enemy {
 	}
 
 	public void update(){
+		if(health <= 0) {
+			dead = true;
+		}
+
 		moveToPlayer();
 	}
 
 	private void moveToPlayer() {
 		//Denna funktion kontrollerar vart spelaren är och förflyttar fienden till spelaren
+		dx = player.xPos - xPos;
+		dy = player.yPos - yPos;
 		
-	}
+		double maxDistanceX = randInt(10 * type, 100 * type); 
+		double maxDistanceY = randInt(10 * type, 100 * type); 
+		
+		if(Math.abs(dx) >= maxDistanceX && Math.abs(dy) >= maxDistanceY) {
+			double alpha = Math.atan(dx/dy);
+			vx = Math.sin(alpha) * speed;
+			vy = Math.cos(alpha) * speed;
+		}
+		
+		else {
+			vx = vy = 0;
+		}
+		
+		xPos += vx;
+		yPos += vy;
 
-	public void setDead(){
-		dead = true;
 	}
-
-	public boolean isDead(){return dead;}
 
 	public void draw(Graphics2D g2d){
-		g2d.drawImage(image,(int) xPos, (int)yPos, null);
+		AffineTransform at = AffineTransform.getTranslateInstance(xPos, yPos);
+		//at.rotate(Math.toRadians(rotateDegrees), width/2, height/2);
+		at.scale(scale, scale);
+		g2d.drawImage(image, at, null);
 	}
 
 	public static int randInt(int min, int max) {
@@ -167,7 +172,13 @@ public class Enemy {
 	}
 
 	public Rectangle getRectangle() {
-		return new Rectangle((int) xPos, (int) yPos, width, height);
+		return new Rectangle((int) xPos, (int) yPos, (int)(width* scale) , (int) (scale * height));
+	}
+
+	public void getDamage(int i) {
+		//denna metod anropas när fienderna blir träffade av skott. 
+		health -= i;
+
 	}
 
 }
