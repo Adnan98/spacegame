@@ -25,7 +25,7 @@ public class Enemy {
 	dx, dy,
 	health,
 	scale,
-	srotate;
+	rotate;
 
 	public boolean dead;
 	Player player;
@@ -77,7 +77,7 @@ public class Enemy {
 
 		case 4:
 			try {
-				image = ImageIO.read(getClass().getResource("/PNG/Enemies/spaceShips_00"+type+".png"));
+				image = ImageIO.read(getClass().getResource("/PNG/Ships/spaceShips_00"+type+".png"));
 			} catch (IOException e) {e.printStackTrace();}	
 
 			width = 126;
@@ -89,7 +89,7 @@ public class Enemy {
 
 		case 5:
 			try {
-				image = ImageIO.read(getClass().getResource("/PNG/Enemies/spaceShips_00"+type+".png"));
+				image = ImageIO.read(getClass().getResource("/PNG/Ships/spaceShips_00"+type+".png"));
 			} catch (IOException e) {e.printStackTrace();}	
 
 			width = 136;
@@ -101,7 +101,7 @@ public class Enemy {
 
 		case 6:
 			try {
-				image = ImageIO.read(getClass().getResource("/PNG/Enemies/spaceShips_00"+type+".png"));
+				image = ImageIO.read(getClass().getResource("/PNG/Ships/spaceShips_00"+type+".png"));
 			} catch (IOException e) {e.printStackTrace();}	
 
 			width = 94;
@@ -131,36 +131,64 @@ public class Enemy {
 		if(health <= 0) {
 			dead = true;
 		}
-
-		moveToPlayer();
-	}
-
-	private void moveToPlayer() {
-		//Denna funktion kontrollerar vart spelaren är och förflyttar fienden till spelaren
 		dx = player.xPos - xPos;
 		dy = player.yPos - yPos;
+		moveToPlayer();
+		rotateToPlayer();
 		
-		double maxDistanceX = randInt(10 * type, 100 * type); 
-		double maxDistanceY = randInt(10 * type, 100 * type); 
+	}
+
+	
+	private void moveToPlayer() {
+		//Denna funktion kontrollerar vart spelaren är och förflyttar fienden till spelaren
+		double theta = Math.atan(dx/dy);
 		
-		if(Math.abs(dx) >= maxDistanceX && Math.abs(dy) >= maxDistanceY) {
-			double alpha = Math.atan(dx/dy);
-			vx = Math.sin(alpha) * speed;
-			vy = Math.cos(alpha) * speed;
+		double maxDistanceX = randInt(50 * type, 100 * type); 
+		double maxDistanceY = randInt(50 * type, 100 * type); 		
+		if(Math.abs(dx) > maxDistanceX  && Math.abs(dy) > maxDistanceY) {
+			vx = Math.sin(theta) * speed;
+			vy = Math.cos(theta) * speed;
+		}
+		
+		else if(Math.abs(dx) < maxDistanceX && Math.abs(dy) < maxDistanceY) {
+			vx = randInt(-5,5);
+			vy = randInt(-5, 5);
 		}
 		
 		else {
 			vx = vy = 0;
 		}
 		
-		xPos += vx;
-		yPos += vy;
+		if(dy < 0) {
+			xPos -= vx;
+			yPos -= vy;
+		}
+		
+		else {
+			xPos += vx;
+			yPos += vy;
+		}
 
+	}
+	
+	private void rotateToPlayer() {
+		double angle = Math.atan(Math.abs(dx)/Math.abs(dy));
+		
+		if(dy > 0) {
+			if(dx > 0 ) rotate = Math.PI - angle;
+			else if(dx < 0) rotate = Math.PI + angle;
+		}
+		
+		else if(dy < 0) {
+			if(dx > 0 ) rotate = angle;
+			else if(dx < 0) rotate = -(angle);
+		}
+		
 	}
 
 	public void draw(Graphics2D g2d){
 		AffineTransform at = AffineTransform.getTranslateInstance(xPos, yPos);
-		//at.rotate(Math.toRadians(rotateDegrees), width/2, height/2);
+		at.rotate(rotate, width * scale /2, height * scale / 2);
 		at.scale(scale, scale);
 		g2d.drawImage(image, at, null);
 	}
