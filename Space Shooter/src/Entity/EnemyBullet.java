@@ -8,56 +8,81 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
+import main.Panel;
+
 public class EnemyBullet {
 
 	private boolean hit;
 	private boolean remove;
 	BufferedImage image;
-
-	double playerX, playerY, xPos, yPos, vx, vy;
-	int type, rotate, width, height, damage, speed;
+	Player player;
+	Enemy enemy;
+	double xPos, yPos, vx, vy, rotate;
+	int type, width, height, damage, speed;
 	
-	public EnemyBullet(int t, double x, double y, int angle){
+	public EnemyBullet(Enemy enemy, int t, double x, double y, Player  player, double root){
 		this.xPos = x;
 		this.yPos = y;
-		//this.playerX = px;
-		//this.playerY = py;
+		this.player = player;
 		this.type = t;
-		this.rotate = angle;
+		
+		this.enemy = enemy;
 		
 		switch (type){
-		case 7:
+		case 1:
 			try {
 				image = ImageIO.read(getClass().getResource("/PNG/Lasers/laserRed"+type+".png"));
 			} catch (IOException e) {e.printStackTrace();}
 
-			width = 48;
-			height =  46;
+			width = 9;
+			height =  37;
 			damage = 10;
 			speed = 15;
-			break;
-
+			break;			
+		
 		}
-
+		
+		double dx = player.xPos - xPos;
+		double dy = player.yPos - yPos;
+		double theta = Math.atan(dx/dy);
+		if(dy > 0) {
+			vx = Math.sin(theta) * speed;
+			vy = Math.cos(theta) * speed;
+		}
+		
+		else {
+			vx = -Math.sin(theta) * speed;
+			vy = -Math.cos(theta) * speed;
+		}
+		
+		double angle = Math.atan(Math.abs(dx)/Math.abs(dy));
+			
+			if(dy > 0) {
+				if(dx > 0 ) rotate = Math.PI - angle;
+				else if(dx < 0) rotate = Math.PI + angle;
+			}
+			
+			else if(dy < 0) {
+				if(dx > 0 ) rotate = angle;
+				else if(dx < 0) rotate = -(angle);
+			}
+		
 	}
 
 	public void update(){
-		move();
-		rotate();
+		move();		
+		
 	}
 
 	public void move(){
-		xPos += Math.sin(rotate) * speed;
-		yPos += Math.cos(rotate) * speed;
-		
+		xPos += vx;
+		yPos += vy;
 	}
 	
-	public void rotate() {
-		
-	}
-
 	public void draw(Graphics2D g2d){
-		g2d.drawImage(image, (int)xPos, (int)yPos, null);
+		AffineTransform at = AffineTransform.getTranslateInstance(xPos, yPos);
+		at.rotate(rotate, enemy.width/2, enemy.health/2);
+		g2d.drawImage(image,at,null);
 
 	}
 

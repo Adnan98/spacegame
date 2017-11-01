@@ -239,7 +239,6 @@ public class Player {
 		for(int i = 0; i < bullets.size(); i++){
 			bullets.get(i).draw((Graphics2D) g2d);
 		}
-
 		AffineTransform at = AffineTransform.getTranslateInstance(xPos, yPos);
 		at.rotate(Math.toRadians(rotateDegrees), width/2, height/2);
 		g2d.drawImage(image,at,null);

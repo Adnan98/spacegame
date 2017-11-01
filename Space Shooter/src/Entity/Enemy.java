@@ -33,6 +33,7 @@ public class Enemy {
 	ArrayList<EnemyBullet> bullets;
 
 	public Enemy(int t, int x, int y, Player p){
+		bullets = new ArrayList<>();
 		player = p;
 		xPos = x;
 		yPos = y;
@@ -131,16 +132,12 @@ public class Enemy {
 		if(health <= 0) {
 			dead = true;
 		}
+		
 		dx = player.xPos - xPos;
 		dy = player.yPos - yPos;
 		moveToPlayer();
 		rotateToPlayer();
 		shoot();
-		
-		for(int i = 0; i < bullets.size(); i++){
-			bullets.get(i).update();
-		}	
-		
 	}
 
 	
@@ -158,6 +155,7 @@ public class Enemy {
 		else if(Math.abs(dx) < maxDistanceX && Math.abs(dy) < maxDistanceY) {
 			vx = randInt(-5,5);
 			vy = randInt(-5, 5);
+			
 		}
 		
 		else {
@@ -173,7 +171,6 @@ public class Enemy {
 			xPos += vx;
 			yPos += vy;
 		}
-
 	}
 	
 	private void rotateToPlayer() {
@@ -192,11 +189,29 @@ public class Enemy {
 	}
 	
 	public void shoot() {
-		EnemyBullet b = new EnemyBullet(7, xPos, yPos, (int)rotate);
-		bullets.add(b);
+		for(int i = 0; i < bullets.size(); i++){
+			EnemyBullet b  = bullets.get(i);
+			if(b.xPos < 0 || b.xPos > Panel.WIDTH || b.yPos < 0 || b.yPos > Panel.HEIGHT) {
+				bullets.remove(i);
+				i--;
+			}
+			else {
+				bullets.get(i).update();
+			}
+			
+		}	
+		
+		if(bullets.size() < 1) {
+			EnemyBullet b = new EnemyBullet(this, 1, xPos, yPos, player, rotate);
+			bullets.add(b);
+		}
 	}
 
 	public void draw(Graphics2D g2d){
+		for(int i = 0; i < bullets.size(); i++){
+			bullets.get(i).draw((Graphics2D) g2d);
+		}
+
 		AffineTransform at = AffineTransform.getTranslateInstance(xPos, yPos);
 		at.rotate(rotate, width * scale /2, height * scale / 2);
 		at.scale(scale, scale);

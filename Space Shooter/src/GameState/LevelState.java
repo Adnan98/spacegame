@@ -44,7 +44,7 @@ public class LevelState extends GameState {
 	double healthBarMaxWidth = 500;
 
 	int maxMeteor = 10;
-	public static int maxEnemy = 20;
+	public static int maxEnemy = 2;
 	public int score = 0;
 	public static int points = 0;
 	public static int time = 0;
