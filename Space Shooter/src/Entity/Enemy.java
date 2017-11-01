@@ -135,6 +135,11 @@ public class Enemy {
 		dy = player.yPos - yPos;
 		moveToPlayer();
 		rotateToPlayer();
+		shoot();
+		
+		for(int i = 0; i < bullets.size(); i++){
+			bullets.get(i).update();
+		}	
 		
 	}
 
@@ -184,6 +189,11 @@ public class Enemy {
 			else if(dx < 0) rotate = -(angle);
 		}
 		
+	}
+	
+	public void shoot() {
+		EnemyBullet b = new EnemyBullet(7, xPos, yPos, (int)rotate);
+		bullets.add(b);
 	}
 
 	public void draw(Graphics2D g2d){

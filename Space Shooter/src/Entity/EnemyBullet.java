@@ -4,6 +4,7 @@ import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
@@ -12,54 +13,51 @@ public class EnemyBullet {
 	private boolean hit;
 	private boolean remove;
 	BufferedImage image;
-	private int moveSpeed = 15;
 
-	int width = 9;
-	int height = 54;
-
-	double playerX;
-	double playerY;
-	double xPos;
-	double yPos;
-
-	double vx;
-	double vy;
-
-	public EnemyBullet(double x, double y, double px, double py){
+	double playerX, playerY, xPos, yPos, vx, vy;
+	int type, rotate, width, height, damage, speed;
+	
+	public EnemyBullet(int t, double x, double y, int angle){
 		this.xPos = x;
 		this.yPos = y;
-		this.playerX = px;
-		this.playerY = py;
+		//this.playerX = px;
+		//this.playerY = py;
+		this.type = t;
+		this.rotate = angle;
+		
+		switch (type){
+		case 7:
+			try {
+				image = ImageIO.read(getClass().getResource("/PNG/Lasers/laserRed"+type+".png"));
+			} catch (IOException e) {e.printStackTrace();}
 
-		try{
-			image = ImageIO.read(getClass().getResourceAsStream("/PNG/Lasers/laserRed08.png"));
+			width = 48;
+			height =  46;
+			damage = 10;
+			speed = 15;
+			break;
+
 		}
-		catch(Exception e){
-			e.printStackTrace();
-		}
-	}
 
-	public void setHit(){
-		//This is the function that gets called to check if the FIREBALL has hit something
-		if(hit) return;//If it has already hit, don't bother!
-		hit = true;
 	}
-
-	public boolean shouldRemove(){ return remove; }
 
 	public void update(){
 		move();
+		rotate();
 	}
 
 	public void move(){
-		if(xPos < playerX)xPos+=5;
-		if(yPos < playerY)yPos+=5;
-		if(playerX < xPos)xPos -= 5;
-		if(playerY < yPos)yPos -= 5;
+		xPos += Math.sin(rotate) * speed;
+		yPos += Math.cos(rotate) * speed;
+		
+	}
+	
+	public void rotate() {
+		
 	}
 
 	public void draw(Graphics2D g2d){
-		g2d.drawImage(image, (int) xPos, (int)yPos, null);
+		g2d.drawImage(image, (int)xPos, (int)yPos, null);
 
 	}
 
