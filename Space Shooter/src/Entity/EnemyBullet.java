@@ -1,6 +1,7 @@
 package Entity;
 
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
@@ -20,27 +21,22 @@ public class EnemyBullet {
 	double xPos, yPos, vx, vy, rotate;
 	int type, width, height, damage, speed;
 	
-	public EnemyBullet(Enemy enemy, int t, double x, double y, Player  player, double root){
+	public EnemyBullet(Enemy enemy, int t, double x, double y, Player  player){
 		this.xPos = x;
 		this.yPos = y;
 		this.player = player;
 		this.type = t;
-		
 		this.enemy = enemy;
 		
-		switch (type){
-		case 1:
-			try {
-				image = ImageIO.read(getClass().getResource("/PNG/Lasers/laserRed"+type+".png"));
-			} catch (IOException e) {e.printStackTrace();}
-
-			width = 9;
-			height =  37;
-			damage = 10;
-			speed = 15;
-			break;			
+		damage = 100 * type;
+		speed = 15 - type;
 		
-		}
+		try {
+			image = ImageIO.read(getClass().getResource("/PNG/enemybullets/bullet"+type+".png"));
+		} catch (IOException e) {e.printStackTrace();}
+		
+		width = image.getWidth();
+		height = image.getHeight();
 		
 		double dx = player.xPos - xPos;
 		double dy = player.yPos - yPos;
@@ -84,6 +80,10 @@ public class EnemyBullet {
 		at.rotate(rotate, enemy.width/2, enemy.health/2);
 		g2d.drawImage(image,at,null);
 
+	}
+	
+	public Rectangle getRectangle() {
+		return new Rectangle((int) xPos, (int) yPos, width, height);
 	}
 
 

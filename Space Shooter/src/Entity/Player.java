@@ -234,7 +234,8 @@ public class Player {
 	}
  
 	
-	public void draw(Graphics2D g2d){
+	public void draw(Graphics2D g2d){			System.out.println(width+height);
+
 
 		for(int i = 0; i < bullets.size(); i++){
 			bullets.get(i).draw((Graphics2D) g2d);
@@ -247,7 +248,7 @@ public class Player {
 	}
 
 	public void enemyBulletCollision(Enemy e) {
-		//Denna metod kontrollerar om spelarens skott träffar någon fiende 
+		//Denna metod kontrollerar om spelarens skott trï¿½ffar nï¿½gon fiende 
 		for(int i = 0; i < bullets.size(); i++){
 			Rectangle rb = bullets.get(i).getRectangle();
 			Rectangle re = e.getRectangle();

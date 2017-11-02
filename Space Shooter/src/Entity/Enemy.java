@@ -16,6 +16,8 @@ import main.Panel;
 public class Enemy {
 
 	BufferedImage image;
+	BufferedImage shadow;
+	BufferedImage filling;
 
 	public int type, width ,height, speed;
 
@@ -24,9 +26,11 @@ public class Enemy {
 	vx, vy, 
 	dx, dy,
 	health,
-	scale,
+	maxHealth,
 	rotate;
 
+	int healthBarMaxWidth = 100;
+			
 	public boolean dead;
 	Player player;
 
@@ -39,6 +43,8 @@ public class Enemy {
 		yPos = y;
 		type = t;
 
+		
+		
 		switch (type){
 		case 1:
 			try {
@@ -47,8 +53,7 @@ public class Enemy {
 
 			width = 106;
 			height =  80;
-			health = 10;
-			scale = 0.4;
+			maxHealth = health  = 10;
 			speed = randInt(10,14);
 			break;
 
@@ -59,8 +64,7 @@ public class Enemy {
 
 			width = 101;
 			height =  74;
-			health = 30;
-			scale = 0.5;
+			maxHealth = health  = 30;
 			speed = randInt(8,12);
 			break;
 
@@ -71,8 +75,7 @@ public class Enemy {
 
 			width = 100;
 			height =  94;
-			health = 20;
-			scale = 0.6;
+			maxHealth = health  = 20;
 			speed = randInt(8,10);
 			break;
 
@@ -83,8 +86,7 @@ public class Enemy {
 
 			width = 126;
 			height =  108;
-			health = 100;
-			scale = 1.0;
+			maxHealth = health  = 100;
 			speed = randInt(6,8);
 			break;
 
@@ -95,8 +97,7 @@ public class Enemy {
 
 			width = 136;
 			height =  84;
-			health = 80;
-			scale = 1.2;
+			maxHealth = health  = 80;
 			speed = randInt(4,6);
 			break;
 
@@ -107,8 +108,7 @@ public class Enemy {
 
 			width = 94;
 			height =  148;
-			health = 90;
-			scale = 1.4;
+			maxHealth = health  = 90;
 			speed = randInt(2,3);
 			break;
 
@@ -119,12 +119,20 @@ public class Enemy {
 
 			width = 172;
 			height =  151;
-			health = 150;
-			scale = 2.0;
+			maxHealth = health  = 150;
 			speed = 1;
 			break;
 
 		}
+		
+
+		try {
+			shadow = ImageIO.read(getClass().getResource("/uipack-space/PNG/barHorizontal_shadow_mid.png"));
+			filling = ImageIO.read(getClass().getResource("/uipack-space/PNG/barHorizontal_yellow_mid.png"));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+			
 
 	}
 
@@ -138,16 +146,17 @@ public class Enemy {
 		moveToPlayer();
 		rotateToPlayer();
 		shoot();
+		playerBulletCollision();
 	}
 
 	
 	private void moveToPlayer() {
-		//Denna funktion kontrollerar vart spelaren är och förflyttar fienden till spelaren
+		//Denna funktion kontrollerar vart spelaren ï¿½r och fï¿½rflyttar fienden till spelaren
 		double theta = Math.atan(dx/dy);
 		
 		double maxDistanceX = randInt(50 * type, 100 * type); 
 		double maxDistanceY = randInt(50 * type, 100 * type); 		
-		if(Math.abs(dx) > maxDistanceX  && Math.abs(dy) > maxDistanceY) {
+		if(Math.abs(dx) > maxDistanceX  && Math.abs(dy) > maxDistanceY){ //|| xPos < 0 || xPos > Panel.WIDTH || yPos < 0 || yPos > Panel.HEIGHT) {
 			vx = Math.sin(theta) * speed;
 			vy = Math.cos(theta) * speed;
 		}
@@ -202,20 +211,47 @@ public class Enemy {
 		}	
 		
 		if(bullets.size() < 1) {
-			EnemyBullet b = new EnemyBullet(this, 1, xPos, yPos, player, rotate);
+			double centerx = xPos;
+			double centery = yPos;
+			
+			double rotateDegrees = Math.toDegrees(rotate);
+
+			if(rotateDegrees < 90){
+				centerx = xPos + (width ) / 2;
+				centery = yPos +(height )/ 2;
+			}
+			if(rotateDegrees > 90 && rotateDegrees < 180){
+				centerx = xPos - (width ) / 2;
+				centery = yPos +(height )/ 2;
+			}
+			if(rotateDegrees > 180 && rotateDegrees < 270){
+				centerx = xPos - (width ) / 2;
+				centery = yPos -(height )/ 2;
+			}
+			if(rotateDegrees > 270 && rotateDegrees < 360){
+				centerx = xPos + (width ) / 2;
+				centery = yPos -(height )/ 2;
+			}
+
+			EnemyBullet b = new EnemyBullet(this, type, centerx, centery, player);
 			bullets.add(b);
 		}
 	}
 
 	public void draw(Graphics2D g2d){
+		//FÃ¶ljande ritar ut alla bullets fÃ¶r enemy
 		for(int i = 0; i < bullets.size(); i++){
 			bullets.get(i).draw((Graphics2D) g2d);
 		}
 
 		AffineTransform at = AffineTransform.getTranslateInstance(xPos, yPos);
-		at.rotate(rotate, width * scale /2, height * scale / 2);
-		at.scale(scale, scale);
+		at.rotate(rotate, width  /2, height  / 2);
 		g2d.drawImage(image, at, null);
+		
+		//FÃ¶ljande ritar ut health-bar fÃ¶r fienderna
+		g2d.drawImage(shadow, (int)xPos, (int)yPos, healthBarMaxWidth , shadow.getHeight() / 4, null);
+		g2d.drawImage(filling, (int)xPos, (int)yPos, (int)(healthBarMaxWidth * (health/maxHealth)), (filling.getHeight() / 4), null);
+				
 	}
 
 	public static int randInt(int min, int max) {
@@ -225,13 +261,32 @@ public class Enemy {
 	}
 
 	public Rectangle getRectangle() {
-		return new Rectangle((int) xPos, (int) yPos, (int)(width* scale) , (int) (scale * height));
+		return new Rectangle((int) xPos, (int) yPos, (int)(width) , (int) (height));
 	}
 
 	public void getDamage(int i) {
-		//denna metod anropas när fienderna blir träffade av skott. 
+		//denna metod anropas nï¿½r fienderna blir trï¿½ffade av skott. 
 		health -= i;
 
+	}
+	
+	public void playerBulletCollision() {
+		//Denna metod kontrollerar om fiendens skott trÃ¤ffar spelaren
+		for(int i = 0; i < bullets.size(); i++){
+			Rectangle rb = bullets.get(i).getRectangle();//rectangle bullet
+			Rectangle rp = player.getRectangle();//rectangle player
+			Rectangle rpanel = new Rectangle(0,0,Panel.WIDTH,Panel.HEIGHT);//rectangle panel
+
+			if(rpanel.contains(rb)){
+				//Only check for bullet collision if bullet is inside screen
+				if(rb.intersects(rp)){
+					player.health -= bullets.get(i).damage;
+					bullets.remove(i);
+					i--;
+				}
+			}
+			
+		}
 	}
 
 }

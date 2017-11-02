@@ -43,8 +43,8 @@ public class LevelState extends GameState {
 	double healthBarWidth;
 	double healthBarMaxWidth = 500;
 
-	int maxMeteor = 10;
-	public static int maxEnemy = 2;
+	int maxMeteor = 20;
+	public static int maxEnemy = 4;
 	public int score = 0;
 	public static int points = 0;
 	public static int time = 0;
@@ -107,6 +107,7 @@ public class LevelState extends GameState {
 				if(e.dead){
 					enemies.remove(i);//If enemy died, remove it
 					i--;
+					points += e.type * 100; 
 				}
 			}			
 
@@ -288,7 +289,7 @@ public class LevelState extends GameState {
 			drawCenteredText(g2d,"Score: "+score / 100, Panel.WIDTH/2, Panel.HEIGHT/2 + 100);
 			g2d.setFont(Panel.regularFont.deriveFont(Panel.regularFont.getSize() * 2F));
 			drawCenteredText(g2d,"Time: "+elapsed +" seconds", Panel.WIDTH/2, Panel.HEIGHT/2 + 150);
-			
+
 			g2d.setFont(Panel.regularFont.deriveFont(Panel.regularFont.getSize() * 1F));
 			drawCenteredText(g2d,"press F5 to restart", Panel.WIDTH/2, Panel.HEIGHT - 30);
 
