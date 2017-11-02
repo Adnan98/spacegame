@@ -13,7 +13,7 @@ public class Meteor {
 
 	BufferedImage image;
 
-	public int type;
+	public int type, color;
 
 	public int width;
 	public int height;
@@ -22,16 +22,24 @@ public class Meteor {
 	public double vx, vy;
 
 	public double rotate;
+	String meteor_color;
 
-	public Meteor(int t, int x, int y){
+	public Meteor(int c,int t, int x, int y){
+		color = c;
 		type = t;
 		xPos = x;
 		yPos = y;
-		switch (type){
+		
+		if(color == 0) meteor_color = "Brown";
+		if(color == 1) meteor_color = "Grey";
 
+		
+		switch (type){
+		
+		
 		case 4:
 			try {
-				image = ImageIO.read(getClass().getResource("/PNG/Meteors/meteorBrown_big3.png"));
+				image = ImageIO.read(getClass().getResource("/PNG/Meteors/meteor"+meteor_color+"_big3.png"));
 			} catch (IOException e) {e.printStackTrace();}
 			width = 89; height = 82;
 			vx = randInt(-2,2);
@@ -40,7 +48,7 @@ public class Meteor {
 
 		case 3:
 			try {
-				image = ImageIO.read(getClass().getResource("/PNG/Meteors/meteorBrown_med3.png"));
+				image = ImageIO.read(getClass().getResource("/PNG/Meteors/meteor"+meteor_color+"_med3.png"));
 			} catch (IOException e) {e.printStackTrace();}
 			width = 45; height = 40;
 			vx = randInt(-4,4);
@@ -49,7 +57,7 @@ public class Meteor {
 
 		case 2:
 			try {
-				image = ImageIO.read(getClass().getResource("/PNG/Meteors/meteorBrown_small2.png"));
+				image = ImageIO.read(getClass().getResource("/PNG/Meteors/meteor"+meteor_color+"_small2.png"));
 			} catch (IOException e) {e.printStackTrace();}
 			width = 29; height = 26;
 			vx = randInt(-6,6);
@@ -58,7 +66,7 @@ public class Meteor {
 			
 		case 1:
 			try {
-				image = ImageIO.read(getClass().getResource("/PNG/Meteors/meteorBrown_tiny2.png"));
+				image = ImageIO.read(getClass().getResource("/PNG/Meteors/meteor"+meteor_color+"_tiny2.png"));
 			} catch (IOException e) {e.printStackTrace();}
 			width = 16; height = 15;
 			vx = randInt(-8,8);

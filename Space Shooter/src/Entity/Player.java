@@ -9,9 +9,10 @@ import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
 
+import util.UI;
+
 import GameState.LevelState;
 import main.Panel;
-import util.CollisionDetection;
 
 public class Player {
 
@@ -58,8 +59,14 @@ public class Player {
 	public boolean boosting;
 	public boolean firing;
 	BufferedImage image;
+	BufferedImage damage_image;
+	BufferedImage damage_image_1;
+	BufferedImage damage_image_2;
+	BufferedImage damage_image_3;
+	
 
 	public ArrayList<Bullet> bullets;
+	UI ui;
 	
 	public Player(){
 
@@ -72,9 +79,14 @@ public class Player {
 		maxHealth = health = 10000;
 		try {
 			image = ImageIO.read(getClass().getResourceAsStream("/PNG/playerShip1_blue.png"));
+			damage_image_1 = ImageIO.read(getClass().getResourceAsStream("/PNG/Damage/playerShip1_damage1.png"));
+			damage_image_2 = ImageIO.read(getClass().getResourceAsStream("/PNG/Damage/playerShip1_damage2.png"));
+			damage_image_3 = ImageIO.read(getClass().getResourceAsStream("/PNG/Damage/playerShip1_damage3.png"));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		
+		ui = new UI(this);
 
 	}
 
@@ -103,6 +115,13 @@ public class Player {
 			}
 			
 			fire();
+			
+			if(health <= maxHealth * 3/4 )
+				damage_image = damage_image_1;
+			if(health <= maxHealth * 2/4)
+				damage_image = damage_image_2;
+			if(health <= maxHealth * 1/4)
+				damage_image = damage_image_3;
 
 		}
 		
@@ -234,18 +253,23 @@ public class Player {
 	}
  
 	
-	public void draw(Graphics2D g2d){			System.out.println(width+height);
-
-
+	public void draw(Graphics2D g2d){	
+		ui.draw(g2d);
+		
+		//Printa alla skott
 		for(int i = 0; i < bullets.size(); i++){
 			bullets.get(i).draw((Graphics2D) g2d);
 		}
+		
+		//printa ut spelaren 
 		AffineTransform at = AffineTransform.getTranslateInstance(xPos, yPos);
 		at.rotate(Math.toRadians(rotateDegrees), width/2, height/2);
 		g2d.drawImage(image,at,null);
+		g2d.drawImage(damage_image,at,null);
 
 
 	}
+
 
 	public void enemyBulletCollision(Enemy e) {
 		//Denna metod kontrollerar om spelarens skott tr�ffar n�gon fiende 

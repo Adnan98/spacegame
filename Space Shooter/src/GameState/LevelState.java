@@ -19,7 +19,6 @@ import javax.imageio.ImageIO;
 import Entity.Enemy;
 import Entity.Meteor;
 import Entity.Player;
-import Entity.Station;
 import main.Panel;
 
 public class LevelState extends GameState {
@@ -137,7 +136,7 @@ public class LevelState extends GameState {
 				meteorY = randInt(-worldLimitY, worldLimitY);
 			}
 
-			meteor = new Meteor(randInt(1,4), meteorX, meteorY);
+			meteor = new Meteor(randInt(0,1), randInt(1,4), meteorX, meteorY);
 			meteors.add(meteor);
 		}		
 	}
@@ -199,7 +198,7 @@ public class LevelState extends GameState {
 							points += 10 * type;
 							meteors.remove(x);
 							for(int j = 0; j < type; j++){
-								meteor = new Meteor(type-1, cx, cy);
+								meteor = new Meteor(m.color, type-1, cx, cy);
 								meteors.add(meteor);
 							}
 
@@ -252,23 +251,6 @@ public class LevelState extends GameState {
 			}
 		}
 
-		//Print out the healht, fire and boost:
-		g2d.setFont(Panel.regularFont);
-		g2d.setColor(Color.white);
-		g2d.drawString("Health", 30, 50);
-		g2d.setColor(Color.RED);
-		g2d.fillRect(130,38,(int) ((int) healthBarMaxWidth*(player.health/player.maxHealth)),10);
-
-		g2d.setColor(Color.white);
-		g2d.drawString("Fire", 30, 70);
-		g2d.setColor(Color.BLUE);
-		g2d.fillRect(130,58,(int) ((int) healthBarMaxWidth*(player.fire/player.maxFire)),10);
-
-		g2d.setColor(Color.white);
-		g2d.drawString("Boost", 30, 90);
-		g2d.setColor(Color.GREEN);
-		g2d.fillRect(130,78,(int) ((int) healthBarMaxWidth*(player.boost/player.maxBoost)),10);
-
 		//Print out the score:
 		g2d.setColor(Color.white);
 		g2d.drawString("Score: "+score / 100, Panel.WIDTH-200, 50);
@@ -276,6 +258,7 @@ public class LevelState extends GameState {
 		for(int i = 0; i < enemies.size(); i++){
 			enemies.get(i).draw(g2d);
 		}
+		
 		for(int i = 0; i < meteors.size(); i++){
 			meteors.get(i).draw(g2d);
 		}
