@@ -42,7 +42,7 @@ public class LevelState extends GameState {
 	double healthBarWidth;
 	double healthBarMaxWidth = 500;
 
-	int maxMeteor = 20;
+	int maxMeteor = 100;
 	public static int maxEnemy = 4;
 	public int score = 0;
 	public static int points = 0;
@@ -252,6 +252,8 @@ public class LevelState extends GameState {
 		}
 
 		//Print out the score:
+		g2d.setFont(Panel.regularFont.deriveFont(Panel.regularFont.getSize() * 1F));
+
 		g2d.setColor(Color.white);
 		g2d.drawString("Score: "+score / 100, Panel.WIDTH-200, 50);
 		
