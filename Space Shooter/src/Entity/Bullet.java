@@ -4,6 +4,7 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
@@ -12,11 +13,9 @@ public class Bullet {
 	private boolean hit;
 	private boolean remove;
 	BufferedImage image;
-	private int moveSpeed = 15;
-
-	int width = 9;
-	int height = 54;
-
+	int width;
+	int height;
+	int speed;
 	int playerWidth;
 	int playerHeight;
 	double xPos;
@@ -24,21 +23,28 @@ public class Bullet {
 	double rotate;
 	double vX;
 	double vY;
+	int type;
+	public int damage;
+	int cost;//The cost of fire to shoot one bullet for the player
 
-	public Bullet(int w, int h, double x, double y, double rotateDegree){
+	public Bullet(int t, int w, int h, double x, double y, double rotateDegree){
 		this.playerWidth = w;
 		this.playerHeight = h;
 		this.rotate = rotateDegree;
 		this.xPos = x;
 		this.yPos = y;
+		this.type = t;
 
-		try{
-			image = ImageIO.read(getClass().getResourceAsStream("/PNG/Lasers/laserBlue01.png"));
-		}
-
-		catch(Exception e){
-			e.printStackTrace();
-		}
+		try {
+			image = ImageIO.read(getClass().getResource("/PNG/bullets/bullet"+type+".png"));
+		} catch (IOException e) {e.printStackTrace();}
+		
+		width = image.getWidth();
+		height = image.getHeight();
+		damage = 100 * type;
+		speed = 15 - type;
+		cost = 100 * type;
+		
 	}
 
 	public void setHit(){
@@ -54,8 +60,8 @@ public class Bullet {
 	}
 
 	public void move(){
-		vX = moveSpeed * Math.sin(Math.toRadians(rotate));
-		vY = -(moveSpeed * Math.cos(Math.toRadians(rotate)));
+		vX = speed * Math.sin(Math.toRadians(rotate));
+		vY = -(speed * Math.cos(Math.toRadians(rotate)));
 
 		xPos += vX;
 		yPos += vY;

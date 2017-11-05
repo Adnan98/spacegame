@@ -14,7 +14,7 @@ public class Game {
 		window.setTitle("SPACE SHOOTER");
 		window.setResizable(true);
 		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		//window.setUndecorated(true);//Detta gör att fösntret visas i fullskärmsläge
+		window.setUndecorated(true);//Detta gör att fösntret visas i fullskärmsläge
 		window.pack();
 		window.setVisible(true); 
 		window.setLocation(0,0);

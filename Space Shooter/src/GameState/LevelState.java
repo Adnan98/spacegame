@@ -16,6 +16,7 @@ import java.util.Random;
 
 import javax.imageio.ImageIO;
 
+import Entity.Bullet;
 import Entity.Enemy;
 import Entity.Meteor;
 import Entity.Player;
@@ -43,7 +44,7 @@ public class LevelState extends GameState {
 	double healthBarMaxWidth = 500;
 
 	int maxMeteor = 100;
-	public static int maxEnemy = 4;
+	public static int maxEnemy = 0;
 	public int score = 0;
 	public static int points = 0;
 	public static int time = 0;
@@ -190,7 +191,6 @@ public class LevelState extends GameState {
 					if(rb.intersects(rm)){
 						maxMeteor += 2;
 
-
 						if(m.type > 1){
 							int cx = (int) m.xPos;
 							int cy = (int) m.yPos;
@@ -208,8 +208,14 @@ public class LevelState extends GameState {
 							x--;
 							points += 10;
 						}
-						player.bullets.remove(i);
-						i--;
+						
+						Bullet b = player.bullets.get(i);
+						b.damage -= 10 * m.type;
+						if(b.damage <= 0) {
+							b = null;
+							player.bullets.remove(i);
+							i--;
+						}
 					}
 				}
 
@@ -258,11 +264,27 @@ public class LevelState extends GameState {
 		g2d.drawString("Score: "+score / 100, Panel.WIDTH-200, 50);
 		
 		for(int i = 0; i < enemies.size(); i++){
-			enemies.get(i).draw(g2d);
+			//Kontrollera ifalll objektet är utanför den synliga delen av planen. Om den är det hoppar den 
+			//över iterationen. Om den är inuti den synliga delen så ritas den ut. 
+			Enemy e = enemies.get(i);
+			if(e.xPos < -10 || e.xPos > Panel.WIDTH + 10|| e.yPos < -10 || e.yPos > Panel.HEIGHT + 10) {
+				continue;
+			}
+			else {
+				e.draw(g2d);
+			}
 		}
 		
 		for(int i = 0; i < meteors.size(); i++){
-			meteors.get(i).draw(g2d);
+			//Kontrollera ifalll objektet är utanför den synliga delen av planen. Om den är det hoppar den 
+			//över iterationen. Om den är inuti den synliga delen så ritas den ut. 
+			Meteor m = meteors.get(i);
+			if(m.xPos < -10 || m.xPos > Panel.WIDTH + 10|| m.yPos < -10 || m.yPos > Panel.HEIGHT + 10) {
+				continue;
+			}
+			else {
+				m.draw(g2d);
+			}
 		}
 		player.draw(g2d);
 		
@@ -293,6 +315,15 @@ public class LevelState extends GameState {
 		if(key == KeyEvent.VK_SHIFT)player.boosting = true;
 		if(key == KeyEvent.VK_SPACE)player.firing = true;
 		//if(key == KeyEvent.VK_DOWN) player.backward = true;
+		
+		if(key == KeyEvent.VK_1)player.bulletType = 1;
+		if(key == KeyEvent.VK_2)player.bulletType = 2;
+		if(key == KeyEvent.VK_3)player.bulletType = 3;
+		if(key == KeyEvent.VK_4)player.bulletType = 4;
+		if(key == KeyEvent.VK_5)player.bulletType = 5;
+		if(key == KeyEvent.VK_6)player.bulletType = 6;
+		
+		
 		if(gameOver){
 			if(key == KeyEvent.VK_F5){
 				init();

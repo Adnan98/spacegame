@@ -28,10 +28,8 @@ public class Player {
 	public double health;
 	public double maxHealth;
 
-	public double fire = 1000;
+	public double fire = 2000;
 	public double maxFire = fire;
-	int fireCost = 50;
-	int fireDamage;	
 
 	public double boost = 1000;
 	public double maxBoost = boost;
@@ -64,9 +62,11 @@ public class Player {
 	BufferedImage damage_image_2;
 	BufferedImage damage_image_3;
 	
-
+	long shootTime;
 	public ArrayList<Bullet> bullets;
 	UI ui;
+	public int bulletType;
+	public int dt;
 	
 	public Player(){
 
@@ -78,7 +78,7 @@ public class Player {
 
 		maxHealth = health = 10000;
 		try {
-			image = ImageIO.read(getClass().getResourceAsStream("/PNG/playerShip1_blue.png"));
+			image = ImageIO.read(getClass().getResourceAsStream("/PNG/playerShip1_green.png"));
 			damage_image_1 = ImageIO.read(getClass().getResourceAsStream("/PNG/Damage/playerShip1_damage1.png"));
 			damage_image_2 = ImageIO.read(getClass().getResourceAsStream("/PNG/Damage/playerShip1_damage2.png"));
 			damage_image_3 = ImageIO.read(getClass().getResourceAsStream("/PNG/Damage/playerShip1_damage3.png"));
@@ -87,6 +87,7 @@ public class Player {
 		}
 		
 		ui = new UI(this);
+		bulletType = 1;
 
 	}
 
@@ -102,7 +103,7 @@ public class Player {
 			getRotation();
 			move();
 			keepInsideBounds();
-			fire += 1;
+			fire += 2;
 			if(fire > maxFire) fire = maxFire;
 			
 			health++;
@@ -114,6 +115,8 @@ public class Player {
 				maxSpeed = 5;
 			}
 			
+			//The time difference since last time shooted
+			dt = (int) ((System.nanoTime() / 1000000000) - (shootTime / 1000000000));
 			fire();
 			
 			if(health <= maxHealth * 3/4 )
@@ -220,41 +223,73 @@ public class Player {
 		if(xPos > Panel.WIDTH - height) xPos = Panel.WIDTH - height;
 		if(yPos < 0 )yPos = 0;
 		if(yPos > Panel.HEIGHT - height) yPos = Panel.HEIGHT - height;
+		//remove the bullets if they go outside the screen
+		for(int i = 0; i < bullets.size(); i++){
+			Bullet b = bullets.get(i);
+			if(b.xPos < 0 || b.xPos > Panel.WIDTH || b.yPos < 0 || b.yPos > Panel.HEIGHT) {
+				bullets.remove(i);
+				i--;
+			}
+		}
 	}
 
 	public void fire(){
 		if(firing){
-			if(fire > fireCost){
-				fire -= fireCost;
-				double centerx = xPos;
-				double centery = yPos;
+			double centerx = xPos;
+			double centery = yPos;
 
-				if(rotateDegrees < 90){
-					centerx = xPos + width / 2;
-					centery = yPos + height / 2;
-				}
-				if(rotateDegrees > 90 && rotateDegrees < 180){
-					centerx = xPos - width / 2;
-					centery = yPos + height / 2;
-				}
-				if(rotateDegrees > 180 && rotateDegrees < 270){
-					centerx = xPos - width / 2;
-					centery = yPos - height / 2;
-				}
-				if(rotateDegrees > 270 && rotateDegrees < 360){
-					centerx = xPos + width / 2;
-					centery = yPos - height / 2;
-				}
+			if(rotateDegrees < 90){
+				centerx = xPos + width / 2;
+				centery = yPos + height / 2;
+			}
+			if(rotateDegrees > 90 && rotateDegrees < 180){
+				centerx = xPos - width / 2;
+				centery = yPos + height / 2;
+			}
+			if(rotateDegrees > 180 && rotateDegrees < 270){
+				centerx = xPos - width / 2;
+				centery = yPos - height / 2;
+			}
+			if(rotateDegrees > 270 && rotateDegrees < 360){
+				centerx = xPos + width / 2;
+				centery = yPos - height / 2;
+			}
 
-				Bullet b = new Bullet(width, height, centerx, centery, rotateDegrees);
-				bullets.add(b); 
+			Bullet b = new Bullet(bulletType, width, height, centerx, centery, rotateDegrees);
+			
+			if(fire > b.cost){
+				if(b.type > 2) {
+					//If the player has selected a missile, it can only shoot one missile every 2 seconds and not as a stream
+					if(dt > b.type) {
+						fire -= b.cost;
+						bullets.add(b); 
+						shootTime = System.nanoTime();
+					}
+					
+				}
+				
+				else {
+					//If the player has selected lasers it can shoot them as a stream
+					fire -= b.cost;
+					bullets.add(b); 
+					shootTime = System.nanoTime();
+				}
+			}
+			
+			else {
+				b = null;//Deletes the bullet since it could not be created due to low ammo
 			}
 		}
 	}
  
 	
 	public void draw(Graphics2D g2d){	
-		ui.draw(g2d);
+		try {
+			ui.draw(g2d);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		//Printa alla skott
 		for(int i = 0; i < bullets.size(); i++){
@@ -281,7 +316,15 @@ public class Player {
 			if(rp.contains(rb)){
 				//Only check for bullet collision if bullet is inside screen
 				if(rb.intersects(re)){
-					e.getDamage(10);
+					e.getDamage(bullets.get(i).damage);
+					
+					Bullet b = bullets.get(i);
+					b.damage -= 10 * e.type;
+					if(b.damage <= 0) {
+						b = null;
+						bullets.remove(i);
+						i--;
+					}
 					bullets.remove(i);
 					i--;
 				}

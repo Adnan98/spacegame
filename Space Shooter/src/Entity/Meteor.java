@@ -31,7 +31,7 @@ public class Meteor {
 		yPos = y;
 		
 		if(color == 0) meteor_color = "Brown";
-		if(color == 1) meteor_color = "Grey";
+		if(color == 1) meteor_color = "Brown";
 
 		
 		switch (type){
@@ -83,9 +83,7 @@ public class Meteor {
 	public void move(){
 		xPos += vx;
 		yPos += vy;
-		rotate += 1;
-		if(rotate > 720)rotate -= 1;
-		if(rotate < -720)rotate +=1;
+		rotate = 1;
 	}
 
 	public void draw(Graphics2D g2d){
