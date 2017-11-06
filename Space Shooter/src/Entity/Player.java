@@ -39,7 +39,7 @@ public class Player {
 	double maxSpeed = 5;
 	double boostSpeed = 10;
 	double stopSpeed = 0.1;
- 
+
 	double rotateDegrees;
 	double rotateSpeed = 1;
 	double maxRotateSpeed = 3;
@@ -61,13 +61,13 @@ public class Player {
 	BufferedImage damage_image_1;
 	BufferedImage damage_image_2;
 	BufferedImage damage_image_3;
-	
+
 	long shootTime;
 	public ArrayList<Bullet> bullets;
 	UI ui;
 	public int bulletType;
-	public int dt;
-	
+	public double dt;
+
 	public Player(){
 
 		alive = true;
@@ -85,7 +85,7 @@ public class Player {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
+
 		ui = new UI(this);
 		bulletType = 1;
 
@@ -105,20 +105,18 @@ public class Player {
 			keepInsideBounds();
 			fire += 2;
 			if(fire > maxFire) fire = maxFire;
-			
+
 			health++;
 			if(health>maxHealth)health = maxHealth;
 
-			if(!boosting){//If not boosting, restore speed to original and regenerate the boost
-				boost += 1;
-				if(boost>maxBoost) boost = maxBoost;
+			if(!boosting){//If not boosting, restore speed to original
 				maxSpeed = 5;
 			}
-			
+
 			//The time difference since last time shooted
-			dt = (int) ((System.nanoTime() / 1000000000) - (shootTime / 1000000000));
-			fire();
-			
+			dt = ((System.nanoTime() / 1000000) - (shootTime / 1000000));
+			shoot();
+
 			if(health <= maxHealth * 3/4 )
 				damage_image = damage_image_1;
 			if(health <= maxHealth * 2/4)
@@ -127,7 +125,7 @@ public class Player {
 				damage_image = damage_image_3;
 
 		}
-		
+
 		for(int i = 0; i < bullets.size(); i++){
 			bullets.get(i).update();
 		}	
@@ -148,18 +146,18 @@ public class Player {
 
 			//If the player is moving forw or backw we need to increse the hypothenusa vector and cap it out at max speed
 			vectorHypo += moveSpeed;	
-			
+
 			if(vectorHypo > maxSpeed) {
 				vectorHypo = maxSpeed;
 			}
-			
+
 			if(forward) {
 				//The real vectors, vectorX and vectorY are components of the vectorHypo and we'll calculate them
 				//with the angle of rotation and some Trigonometry
 				vectorX = vectorHypo * Math.sin(Math.toRadians(rotateDegrees));
 				vectorY = -(vectorHypo * Math.cos(Math.toRadians(rotateDegrees)));
 			}
-			
+
 			else if(backward) {
 				vectorX = -(vectorHypo/2) * Math.sin(Math.toRadians(rotateDegrees));
 				vectorY = (vectorHypo/2) * Math.cos(Math.toRadians(rotateDegrees));
@@ -233,7 +231,7 @@ public class Player {
 		}
 	}
 
-	public void fire(){
+	public void shoot(){
 		if(firing){
 			double centerx = xPos;
 			double centery = yPos;
@@ -256,18 +254,18 @@ public class Player {
 			}
 
 			Bullet b = new Bullet(bulletType, width, height, centerx, centery, rotateDegrees);
-			
+
 			if(fire > b.cost){
 				if(b.type > 2) {
 					//If the player has selected a missile, it can only shoot one missile every 2 seconds and not as a stream
-					if(dt > b.type) {
+					if((dt/1000) > b.type) {
 						fire -= b.cost;
 						bullets.add(b); 
 						shootTime = System.nanoTime();
 					}
-					
+
 				}
-				
+
 				else {
 					//If the player has selected lasers it can shoot them as a stream
 					fire -= b.cost;
@@ -275,14 +273,14 @@ public class Player {
 					shootTime = System.nanoTime();
 				}
 			}
-			
+
 			else {
 				b = null;//Deletes the bullet since it could not be created due to low ammo
 			}
 		}
 	}
- 
-	
+
+
 	public void draw(Graphics2D g2d){	
 		try {
 			ui.draw(g2d);
@@ -290,12 +288,12 @@ public class Player {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		//Printa alla skott
 		for(int i = 0; i < bullets.size(); i++){
 			bullets.get(i).draw((Graphics2D) g2d);
 		}
-		
+
 		//printa ut spelaren 
 		AffineTransform at = AffineTransform.getTranslateInstance(xPos, yPos);
 		at.rotate(Math.toRadians(rotateDegrees), width/2, height/2);
@@ -317,7 +315,7 @@ public class Player {
 				//Only check for bullet collision if bullet is inside screen
 				if(rb.intersects(re)){
 					e.getDamage(bullets.get(i).damage);
-					
+
 					Bullet b = bullets.get(i);
 					b.damage -= 10 * e.type;
 					if(b.damage <= 0) {
@@ -325,18 +323,18 @@ public class Player {
 						bullets.remove(i);
 						i--;
 					}
-					bullets.remove(i);
-					i--;
 				}
 			}
-			
+
 		}
 	}
-	
 
-	public Rectangle getRectangle() {
-		return new Rectangle((int) xPos, (int) yPos, width, height);
-	}
+
+
+public Rectangle getRectangle() {
+	return new Rectangle((int) xPos, (int) yPos, width, height);
+}
+
 
 
 

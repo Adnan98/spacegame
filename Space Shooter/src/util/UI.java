@@ -13,6 +13,7 @@ import javax.imageio.ImageIO;
 import main.Panel;
 
 import Entity.Player;
+import GameState.LevelState;
 
 public class UI {
 	
@@ -22,6 +23,7 @@ public class UI {
 	BufferedImage barHorizontal_green_mid;
 	BufferedImage barHorizontal_red_mid;
 	BufferedImage glassPanel;
+	BufferedImage coin;
 	public ArrayList <BufferedImage> utils;
 	int barMaxWidth = 500;
 	
@@ -36,16 +38,17 @@ public class UI {
 			barHorizontal_red_mid = ImageIO.read(getClass().getResource("/uipack-space/PNG/barHorizontal_red_mid.png"));
 			glassPanel = ImageIO.read(getClass().getResource("/uipack-space/PNG/glassPanel.png"));
 			
-			//Ladda bild för samtliga kanoner och spara de i listan
+			//Ladda bild fï¿½r samtliga kanoner och spara de i listan
 			for(int i = 1; i <= 6; i++) {
 				utils.add(ImageIO.read(getClass().getResource("/PNG/bullets/bullet"+i+".png")));
 			}
 			
-			//Ladda bild för samtliga utils och spara de i listan
+			//Ladda bild fï¿½r samtliga utils och spara de i listan
 			for(int i = 1; i <= 3; i++) {
 				utils.add(ImageIO.read(getClass().getResource("/PNG/utils/util"+i+".png")));
 			}
 			
+			coin = ImageIO.read(getClass().getResource("/PNG/powerups/powerup0.png"));
 			
 			
 		} catch (IOException e) {
@@ -76,7 +79,7 @@ public class UI {
 		
 		for(int i = 0; i < 9; i ++) {
 			int k = i+1;
-			//This if statement checks that the current bullet is not selected so all non-selcted bullets can be drawn in low opacity
+			//This if statement checks that the current bullet is not selected so all non-selected bullets can be drawn in low opacity
 			if(player.bulletType != k) g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f));
 			g2d.drawImage(glassPanel, 10 + (i*100), Panel.HEIGHT-100,  null);
 			g2d.drawString(Integer.toString(k), 20 + (i*100), Panel.HEIGHT-75);
@@ -91,13 +94,18 @@ public class UI {
 				g2d.drawImage(image, at, null);
 			}
 			
+			g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.3f));			
+			double extent = 1 - (player.dt/(player.bulletType * 1000));
+			if(player.dt > player.bulletType * 1000 || player.bulletType < 3)
+				extent  = 0;
+	        g2d.fill(new Arc2D.Double(700, 50, 50, 50, 90, 360 * extent, Arc2D.PIE));//arguments: x , y, width, height, starting angle, extent
 			g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));//This resets the drawing opacity so everything that follows is drawn normally
-			
-			g2d.setPaint(Color.WHITE);
-			System.out.println((player.dt/player.bulletType));
-	        g2d.fill(new Arc2D.Double(700, 50, 50, 50, 90, 360 * (player.dt/player.bulletType) , Arc2D.PIE));//args: x , y, width, height, starting angle, extent
-		
+
 		}
+		
+		//Draw how many coins the player has
+		g2d.drawImage(coin, Panel.WIDTH - 200, 80, null);
+		g2d.drawString(Integer.toString(LevelState.coins), Panel.WIDTH - 150, 100);
 		
 		
 	

@@ -20,6 +20,8 @@ import Entity.Bullet;
 import Entity.Enemy;
 import Entity.Meteor;
 import Entity.Player;
+import Entity.PowerUp;
+import Entity.Shield;
 import main.Panel;
 
 public class LevelState extends GameState {
@@ -31,9 +33,10 @@ public class LevelState extends GameState {
 	BufferedImage bg;
 	int bgSize = 256;
 
-	Player player;
+	public Player player;
 	Meteor meteor;
 	Enemy enemy;
+	ArrayList<PowerUp> powerups;
 	ArrayList<Meteor> meteors;
 	ArrayList<Enemy> enemies;
 
@@ -50,6 +53,8 @@ public class LevelState extends GameState {
 	public static int time = 0;
 	long startTime;
 	int elapsed;
+	private Shield shield;
+	public static int coins;
 
 	public LevelState(GameStateManager GSM){
 		this.GSM = GSM;
@@ -63,16 +68,22 @@ public class LevelState extends GameState {
 
 		init();		
 	}
+	
+	public static  int getCoins(){
+		return coins;
+	}
 
 
 	public void init() {
+		coins  = 0;
 		player = new Player();
+		powerups = new ArrayList<>();
 		meteors = new ArrayList<>();
 		enemies = new ArrayList<>();
 		score = points = 0;
 		startTime = System.nanoTime();
 		elapsed = 0;
-
+		shield = new Shield(player, 100);
 	}
 
 
@@ -91,15 +102,11 @@ public class LevelState extends GameState {
 			removeEnemy();
 			checkBulletMeteorCollision();
 			checkPlayerCollision();
+			checkPowerupCollision();
 			player.update();
 
-			for(int i = 0; i < enemies.size(); i++){
-				player.enemyBulletCollision(enemies.get(i));
-			}
-
-			for(int i = 0; i < meteors.size(); i++){
-				meteors.get(i).update();
-			}
+			for(Enemy e : enemies)player.enemyBulletCollision(e);
+			for(Meteor m : meteors) m.update();
 
 			for(int i = 0; i < enemies.size(); i++){
 				Enemy e = enemies.get(i);
@@ -201,8 +208,14 @@ public class LevelState extends GameState {
 								meteor = new Meteor(m.color, type-1, cx, cy);
 								meteors.add(meteor);
 							}
+							
+							if(m.type > 2){
+								powerups.add(new PowerUp(this, randInt(0, (player.boost < player.maxBoost / 4 ? 1 : 0) ), cx, cy));
+							}
+								//The big stones drop new powerups
 
-						}
+						}		
+						
 						else{
 							meteors.remove(x);
 							x--;
@@ -246,6 +259,19 @@ public class LevelState extends GameState {
 		}
 
 	}
+	
+	public void checkPowerupCollision(){
+		for(int i = 0; i < powerups.size(); i++){
+			PowerUp p = powerups.get(i);
+			Rectangle rect_powerup = p.getRectangle();
+			Rectangle rect_player = player.getRectangle();
+			if(rect_player.intersects(rect_powerup)){
+				p.collision();
+				powerups.remove(i);
+				i--;
+			}
+		}
+	}
 
 
 	public void draw(Graphics2D g2d) {
@@ -257,17 +283,22 @@ public class LevelState extends GameState {
 			}
 		}
 
-		//Print out the score:
+		//Print out the score: 
 		g2d.setFont(Panel.regularFont.deriveFont(Panel.regularFont.getSize() * 1F));
 
 		g2d.setColor(Color.white);
 		g2d.drawString("Score: "+score / 100, Panel.WIDTH-200, 50);
 		
+		for(PowerUp p : powerups){
+			p.draw(g2d);
+		}
+			
+			
 		for(int i = 0; i < enemies.size(); i++){
-			//Kontrollera ifalll objektet är utanför den synliga delen av planen. Om den är det hoppar den 
-			//över iterationen. Om den är inuti den synliga delen så ritas den ut. 
+			//Kontrollera ifalll objektet ï¿½r utanfï¿½r den synliga delen av planen. Om den ï¿½r det hoppar den 
+			//ï¿½ver iterationen. Om den ï¿½r inuti den synliga delen sï¿½ ritas den ut. 
 			Enemy e = enemies.get(i);
-			if(e.xPos < -10 || e.xPos > Panel.WIDTH + 10|| e.yPos < -10 || e.yPos > Panel.HEIGHT + 10) {
+			if(e.xPos < -100 || e.xPos > Panel.WIDTH + 100|| e.yPos < -100 || e.yPos > Panel.HEIGHT + 100) {
 				continue;
 			}
 			else {
@@ -275,9 +306,12 @@ public class LevelState extends GameState {
 			}
 		}
 		
+		player.draw(g2d);
+		shield.draw(g2d);
+		
 		for(int i = 0; i < meteors.size(); i++){
-			//Kontrollera ifalll objektet är utanför den synliga delen av planen. Om den är det hoppar den 
-			//över iterationen. Om den är inuti den synliga delen så ritas den ut. 
+			//Kontrollera ifalll objektet ï¿½r utanfï¿½r den synliga delen av planen. Om den ï¿½r det hoppar den 
+			//ï¿½ver iterationen. Om den ï¿½r inuti den synliga delen sï¿½ ritas den ut. 
 			Meteor m = meteors.get(i);
 			if(m.xPos < -10 || m.xPos > Panel.WIDTH + 10|| m.yPos < -10 || m.yPos > Panel.HEIGHT + 10) {
 				continue;
@@ -286,7 +320,7 @@ public class LevelState extends GameState {
 				m.draw(g2d);
 			}
 		}
-		player.draw(g2d);
+		
 		
 		//Print GAME OVER and score if gameOver
 		if(gameOver){
