@@ -30,7 +30,7 @@ public class Enemy {
 	rotate;
 
 	int healthBarMaxWidth = 100;
-			
+
 	public boolean dead;
 	Player player;
 
@@ -43,8 +43,8 @@ public class Enemy {
 		yPos = y;
 		type = t;
 
-		
-		
+
+
 		switch (type){
 		case 1:
 			try {
@@ -124,7 +124,7 @@ public class Enemy {
 			break;
 
 		}
-		
+
 
 		try {
 			shadow = ImageIO.read(getClass().getResource("/uipack-space/PNG/barHorizontal_shadow_mid.png"));
@@ -132,7 +132,7 @@ public class Enemy {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-			
+
 
 	}
 
@@ -140,7 +140,7 @@ public class Enemy {
 		if(health <= 0) {
 			dead = true;
 		}
-		
+
 		dx = player.xPos - xPos;
 		dy = player.yPos - yPos;
 		moveToPlayer();
@@ -149,54 +149,54 @@ public class Enemy {
 		playerBulletCollision();
 	}
 
-	
+
 	private void moveToPlayer() {
 		//Denna funktion kontrollerar vart spelaren �r och f�rflyttar fienden till spelaren
 		double theta = Math.atan(dx/dy);
-		
+
 		double maxDistanceX = randInt(50 * type, 100 * type); 
 		double maxDistanceY = randInt(50 * type, 100 * type); 		
 		if(Math.abs(dx) > maxDistanceX  && Math.abs(dy) > maxDistanceY){ //|| xPos < 0 || xPos > Panel.WIDTH || yPos < 0 || yPos > Panel.HEIGHT) {
 			vx = Math.sin(theta) * speed;
 			vy = Math.cos(theta) * speed;
 		}
-		
+
 		else if(Math.abs(dx) < maxDistanceX && Math.abs(dy) < maxDistanceY) {
 			vx = randInt(-5,5);
 			vy = randInt(-5, 5);
-			
+
 		}
-		
+
 		else {
 			vx = vy = 0;
 		}
-		
+
 		if(dy < 0) {
 			xPos -= vx;
 			yPos -= vy;
 		}
-		
+
 		else {
 			xPos += vx;
 			yPos += vy;
 		}
 	}
-	
+
 	private void rotateToPlayer() {
 		double angle = Math.atan(Math.abs(dx)/Math.abs(dy));
-		
+
 		if(dy > 0) {
 			if(dx > 0 ) rotate = Math.PI - angle;
 			else if(dx < 0) rotate = Math.PI + angle;
 		}
-		
+
 		else if(dy < 0) {
 			if(dx > 0 ) rotate = angle;
 			else if(dx < 0) rotate = -(angle);
 		}
-		
+
 	}
-	
+
 	public void shoot() {
 		for(int i = 0; i < bullets.size(); i++){
 			EnemyBullet b  = bullets.get(i);
@@ -207,13 +207,13 @@ public class Enemy {
 			else {
 				bullets.get(i).update();
 			}
-			
+
 		}	
-		
+
 		if(bullets.size() < 1) {
 			double centerx = xPos;
 			double centery = yPos;
-			
+
 			double rotateDegrees = Math.toDegrees(rotate);
 
 			if(rotateDegrees < 90){
@@ -247,11 +247,11 @@ public class Enemy {
 		AffineTransform at = AffineTransform.getTranslateInstance(xPos, yPos);
 		at.rotate(rotate, width  /2, height  / 2);
 		g2d.drawImage(image, at, null);
-		
+
 		//Följande ritar ut health-bar för fienderna
 		g2d.drawImage(shadow, (int)xPos, (int)yPos, healthBarMaxWidth , shadow.getHeight() / 4, null);
 		g2d.drawImage(filling, (int)xPos, (int)yPos, (int)(healthBarMaxWidth * (health/maxHealth)), (filling.getHeight() / 4), null);
-				
+
 	}
 
 	public static int randInt(int min, int max) {
@@ -269,7 +269,7 @@ public class Enemy {
 		health -= i;
 
 	}
-	
+
 	public void playerBulletCollision() {
 		//Denna metod kontrollerar om fiendens skott träffar spelaren
 		for(int i = 0; i < bullets.size(); i++){
@@ -277,15 +277,28 @@ public class Enemy {
 			Rectangle rp = player.getRectangle();//rectangle player
 			Rectangle rpanel = new Rectangle(0,0,Panel.WIDTH,Panel.HEIGHT);//rectangle panel
 
+
 			if(rpanel.contains(rb)){
 				//Only check for bullet collision if bullet is inside screen
-				if(rb.intersects(rp)){
-					player.health -= bullets.get(i).damage;
-					bullets.remove(i);
-					i--;
+				if(player.shield != null) {
+					//this means the player has shield activated and cannot take damage, the shield will take damage instead
+					Rectangle rs = player.shield.getRectangle();
+					if(rb.intersects(rs))	{
+						player.shield.health -= bullets.get(i).damage;
+						bullets.remove(i);
+						i--;
+					}
 				}
+				else {
+					if(rb.intersects(rp)) {
+						player.health -= bullets.get(i).damage;
+						bullets.remove(i);
+						i--;
+					}
+				}
+
 			}
-			
+
 		}
 	}
 

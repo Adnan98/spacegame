@@ -47,13 +47,12 @@ public class LevelState extends GameState {
 	double healthBarMaxWidth = 500;
 
 	int maxMeteor = 100;
-	public static int maxEnemy = 0;
+	public static int maxEnemy = 2;
 	public int score = 0;
 	public static int points = 0;
 	public static int time = 0;
 	long startTime;
 	int elapsed;
-	private Shield shield;
 	public static int coins;
 
 	public LevelState(GameStateManager GSM){
@@ -83,7 +82,6 @@ public class LevelState extends GameState {
 		score = points = 0;
 		startTime = System.nanoTime();
 		elapsed = 0;
-		shield = new Shield(player, 100);
 	}
 
 
@@ -91,7 +89,7 @@ public class LevelState extends GameState {
 		
 		if(player.alive){
 			elapsed = (int) ((System.nanoTime() - startTime)/1000000000);
-
+			
 			while(score < points){
 				score += 1;
 			}
@@ -114,7 +112,9 @@ public class LevelState extends GameState {
 				if(e.dead){
 					enemies.remove(i);//If enemy died, remove it
 					i--;
-					points += e.type * 100; 
+					points += e.type * 100;
+					powerups.add(new PowerUp(this, randInt(0, (player.shield == null ? 6 : 3)), (int)e.xPos , (int)e.yPos));
+					e = null;
 				}
 			}			
 
@@ -307,7 +307,6 @@ public class LevelState extends GameState {
 		}
 		
 		player.draw(g2d);
-		shield.draw(g2d);
 		
 		for(int i = 0; i < meteors.size(); i++){
 			//Kontrollera ifalll objektet �r utanf�r den synliga delen av planen. Om den �r det hoppar den 

@@ -15,7 +15,7 @@ public class PowerUp {
 	int xPos, yPos, width, height, type; 
 	public ArrayList <BufferedImage> powerups;
 	LevelState levelState;
-	
+
 	public PowerUp(LevelState l, int t, int x, int y){
 		type = t;//The type ranges from 0 - 6
 		xPos = x;
@@ -38,11 +38,30 @@ public class PowerUp {
 		case 0:
 			levelState.coins++;	
 			break;
-		
+
 		case 1:
 			levelState.player.boost = levelState.player.maxBoost;	
 			break;
+			
+		case 2:
+			levelState.player.health += levelState.player.maxHealth/4;
+			break;
+			
+		case 3:
+			levelState.player.fire += levelState.player.maxFire;
+			break;
+			
+		case 4:
+			levelState.player.shield = new Shield(levelState.player, 1);
+			break;
+			
+		case 5:
+			levelState.player.shield = new Shield(levelState.player, 2);
+			break;
 
+		case 6:
+			levelState.player.shield = new Shield(levelState.player, 3);
+			break;
 		}
 	}
 

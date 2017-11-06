@@ -67,6 +67,7 @@ public class Player {
 	UI ui;
 	public int bulletType;
 	public double dt;
+	public Shield shield;
 
 	public Player(){
 
@@ -88,6 +89,7 @@ public class Player {
 
 		ui = new UI(this);
 		bulletType = 1;
+		shield = null;
 
 	}
 
@@ -124,6 +126,11 @@ public class Player {
 			if(health <= maxHealth * 1/4)
 				damage_image = damage_image_3;
 
+			if(shield != null) {
+				shield.health -= 0.5;
+				if(shield.health <= 0)
+					shield = null;
+			}
 		}
 
 		for(int i = 0; i < bullets.size(); i++){
@@ -300,6 +307,7 @@ public class Player {
 		g2d.drawImage(image,at,null);
 		g2d.drawImage(damage_image,at,null);
 
+		if(shield != null) shield.draw(g2d);
 
 	}
 
@@ -331,9 +339,9 @@ public class Player {
 
 
 
-public Rectangle getRectangle() {
-	return new Rectangle((int) xPos, (int) yPos, width, height);
-}
+	public Rectangle getRectangle() {
+		return new Rectangle((int) xPos, (int) yPos, width, height);
+	}
 
 
 

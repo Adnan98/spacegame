@@ -1,6 +1,7 @@
 package Entity;
 
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -10,13 +11,15 @@ import javax.imageio.ImageIO;
 
 public class Shield {
 
-	int xPos, yPos, width, height, rotate, health;
+	int xPos, yPos, width, height, rotate;
+	public double health;
 	Player player;
 	ArrayList<BufferedImage> images;	
-
+	BufferedImage image;
+	
 	public Shield(Player p, int h) {
 		player = p;
-		health = h;
+		health = h * 600;
 		images  = new ArrayList<>();
 		
 		try {
@@ -29,11 +32,19 @@ public class Shield {
 
 	}
 	
-	public void draw(Graphics2D g2d){
-		AffineTransform at = AffineTransform.getTranslateInstance(player.xPos, player.yPos);
-		at.rotate(Math.toRadians(player.rotateDegrees), images.get(2).getWidth()/2, images.get(2).getHeight()/2);
-		g2d.drawImage(images.get(2),at,null);
+	public void draw(Graphics2D g2d){		
+		if(health > 0) image = images.get(0);
+		if(health > 1200) image = images.get(1);
+		if(health > 1800) image = images.get(2);
+		AffineTransform at = AffineTransform.getTranslateInstance(player.xPos - 25, player.yPos - 25);
+		at.rotate(Math.toRadians(player.rotateDegrees), image.getWidth()/2, image.getHeight()/2);
+		g2d.drawImage(image,at,null);
+			
 	}
 	
+	public Rectangle getRectangle() {
+		return new Rectangle((int) player.xPos - 25, (int) player.yPos - 25, image.getWidth() , image.getHeight());
+	}
+
 
 }
