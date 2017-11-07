@@ -18,12 +18,12 @@ public class Bullet {
 	int speed;
 	int playerWidth;
 	int playerHeight;
-	double xPos;
-	double yPos;
+	public double xPos;
+	public double yPos;
 	double rotate;
 	double vX;
 	double vY;
-	int type;
+	public int type;
 	public int damage;
 	int cost;//The cost of fire to shoot one bullet for the player
 
@@ -41,8 +41,8 @@ public class Bullet {
 		
 		width = image.getWidth();
 		height = image.getHeight();
-		damage = 100 * type;
-		speed = 15 - type;
+		damage = (type == 6 ? 400 : 100 * type);
+		speed = 30 - type;
 		cost = 100 * type;
 		
 	}

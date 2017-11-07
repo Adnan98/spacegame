@@ -29,7 +29,7 @@ public class EnemyBullet {
 		this.enemy = enemy;
 		
 		damage = 100 * type;
-		speed = 15 - type;
+		speed = 30 - type;
 		
 		try {
 			image = ImageIO.read(getClass().getResource("/PNG/enemybullets/bullet"+type+".png"));

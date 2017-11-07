@@ -54,7 +54,7 @@ public class Enemy {
 			width = 106;
 			height =  80;
 			maxHealth = health  = 10;
-			speed = randInt(10,14);
+			speed = randInt(20,28);
 			break;
 
 		case 2:
@@ -65,7 +65,7 @@ public class Enemy {
 			width = 101;
 			height =  74;
 			maxHealth = health  = 30;
-			speed = randInt(8,12);
+			speed = randInt(16,24);
 			break;
 
 		case 3:
@@ -76,7 +76,7 @@ public class Enemy {
 			width = 100;
 			height =  94;
 			maxHealth = health  = 20;
-			speed = randInt(8,10);
+			speed = randInt(16,20);
 			break;
 
 		case 4:
@@ -87,7 +87,7 @@ public class Enemy {
 			width = 126;
 			height =  108;
 			maxHealth = health  = 100;
-			speed = randInt(6,8);
+			speed = randInt(12,16);
 			break;
 
 		case 5:
@@ -98,7 +98,7 @@ public class Enemy {
 			width = 136;
 			height =  84;
 			maxHealth = health  = 80;
-			speed = randInt(4,6);
+			speed = randInt(8,12);
 			break;
 
 		case 6:
@@ -109,7 +109,7 @@ public class Enemy {
 			width = 94;
 			height =  148;
 			maxHealth = health  = 90;
-			speed = randInt(2,3);
+			speed = randInt(4,6);
 			break;
 
 		case 7:

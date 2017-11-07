@@ -37,7 +37,7 @@ public class Panel extends JPanel implements Runnable, KeyListener, MouseListene
 	public static final int HEIGHT = (int) screenSize.getHeight();
 	private Thread thread;
 	private boolean running;
-	private int FPS = 60;//Antalet uppdatering per sekund
+	private int FPS = 30;//Antalet uppdatering per sekund
 	private long targetTime = 1000 / FPS;//Antalet sekunder som går mellan varje uppdatering av skärmen
 
 	private BufferedImage image;

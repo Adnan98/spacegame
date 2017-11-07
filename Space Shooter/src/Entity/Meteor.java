@@ -42,8 +42,8 @@ public class Meteor {
 				image = ImageIO.read(getClass().getResource("/PNG/Meteors/meteor"+meteor_color+"_big3.png"));
 			} catch (IOException e) {e.printStackTrace();}
 			width = 89; height = 82;
-			vx = randInt(-2,2);
-			vy = randInt(-2,2);
+			vx = randInt(-4,4);
+			vy = randInt(-4,4);
 			break;
 
 		case 3:
@@ -51,8 +51,8 @@ public class Meteor {
 				image = ImageIO.read(getClass().getResource("/PNG/Meteors/meteor"+meteor_color+"_med3.png"));
 			} catch (IOException e) {e.printStackTrace();}
 			width = 45; height = 40;
-			vx = randInt(-4,4);
-			vy = randInt(-4,4);
+			vx = randInt(-8,8);
+			vy = randInt(-8,8);
 			break;
 
 		case 2:
@@ -60,8 +60,8 @@ public class Meteor {
 				image = ImageIO.read(getClass().getResource("/PNG/Meteors/meteor"+meteor_color+"_small2.png"));
 			} catch (IOException e) {e.printStackTrace();}
 			width = 29; height = 26;
-			vx = randInt(-6,6);
-			vy = randInt(-6,6);
+			vx = randInt(-12,12);
+			vy = randInt(-12,12);
 			break;
 			
 		case 1:
@@ -69,8 +69,8 @@ public class Meteor {
 				image = ImageIO.read(getClass().getResource("/PNG/Meteors/meteor"+meteor_color+"_tiny2.png"));
 			} catch (IOException e) {e.printStackTrace();}
 			width = 16; height = 15;
-			vx = randInt(-8,8);
-			vy = randInt(-8,8);
+			vx = randInt(-16,16);
+			vy = randInt(-16,16);
 			break;
 		}
 

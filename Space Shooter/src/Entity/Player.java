@@ -6,6 +6,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Random;
 
 import javax.imageio.ImageIO;
 
@@ -18,8 +19,8 @@ public class Player {
 
 	double xPos = 500;
 	double yPos = 300;
-	int width = 99;
-	int height = 75;
+	public int width = 99;
+	public int height = 75;
 	double scale = 0.8; 
 	double centerX;
 	double centerY;
@@ -35,15 +36,15 @@ public class Player {
 	public double maxBoost = boost;
 	int boostCost = 10;
 
-	double moveSpeed = 2;
-	double maxSpeed = 5;
-	double boostSpeed = 10;
-	double stopSpeed = 0.1;
+	double moveSpeed = 4;
+	double maxSpeed = 10;
+	double boostSpeed = 20;
+	double stopSpeed = 0.5;
 
 	double rotateDegrees;
-	double rotateSpeed = 1;
-	double maxRotateSpeed = 3;
-	double stopRotateSpeed = 0.1;
+	double rotateSpeed = 2;
+	double maxRotateSpeed = 6;
+	double stopRotateSpeed = 0.2;
 
 	double vectorX;
 	double vectorY;
@@ -105,14 +106,14 @@ public class Player {
 			getRotation();
 			move();
 			keepInsideBounds();
-			fire += 2;
+			fire += 4;
 			if(fire > maxFire) fire = maxFire;
 
-			health++;
+			health += 2;
 			if(health>maxHealth)health = maxHealth;
 
 			if(!boosting){//If not boosting, restore speed to original
-				maxSpeed = 5;
+				maxSpeed = 10;
 			}
 
 			//The time difference since last time shooted
@@ -127,7 +128,7 @@ public class Player {
 				damage_image = damage_image_3;
 
 			if(shield != null) {
-				shield.health -= 0.5;
+				shield.health -= 1;
 				if(shield.health <= 0)
 					shield = null;
 			}
@@ -325,11 +326,16 @@ public class Player {
 					e.getDamage(bullets.get(i).damage);
 
 					Bullet b = bullets.get(i);
-					b.damage -= 10 * e.type;
-					if(b.damage <= 0) {
-						b = null;
+					b.damage -= 100 * e.type;
+					if(b.damage <= 0) {		
+						if(b.type == 6) {
+							for(int x = 0; x < 10; x++){
+								bullets.add(new Bullet(1, width, height, b.xPos, b.yPos, randInt(0,360)));
+							}
+						}
 						bullets.remove(i);
 						i--;
+						
 					}
 				}
 			}
@@ -338,14 +344,13 @@ public class Player {
 	}
 
 
-
 	public Rectangle getRectangle() {
 		return new Rectangle((int) xPos, (int) yPos, width, height);
 	}
 
-
-
-
-
-
+	public static int randInt(int min, int max) {
+		Random rand = new Random();
+		int randomNum = min + rand.nextInt((max - min) + 1);
+		return randomNum;
+	}
 }

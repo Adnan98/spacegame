@@ -22,6 +22,7 @@ import Entity.Meteor;
 import Entity.Player;
 import Entity.PowerUp;
 import Entity.Shield;
+import Entity.Sattelite;
 import main.Panel;
 
 public class LevelState extends GameState {
@@ -38,7 +39,7 @@ public class LevelState extends GameState {
 	Enemy enemy;
 	ArrayList<PowerUp> powerups;
 	ArrayList<Meteor> meteors;
-	ArrayList<Enemy> enemies;
+	public ArrayList<Enemy> enemies;
 
 	int worldLimitX = Panel.WIDTH *2;
 	int worldLimitY = Panel.HEIGHT *2;
@@ -47,13 +48,14 @@ public class LevelState extends GameState {
 	double healthBarMaxWidth = 500;
 
 	int maxMeteor = 100;
-	public static int maxEnemy = 2;
+	public static int maxEnemy = 1;
 	public int score = 0;
 	public static int points = 0;
 	public static int time = 0;
 	long startTime;
 	int elapsed;
 	public static int coins;
+	Sattelite sat;
 
 	public LevelState(GameStateManager GSM){
 		this.GSM = GSM;
@@ -76,6 +78,9 @@ public class LevelState extends GameState {
 	public void init() {
 		coins  = 0;
 		player = new Player();
+		
+		sat = new Sattelite(2, 500, 500, this);
+				
 		powerups = new ArrayList<>();
 		meteors = new ArrayList<>();
 		enemies = new ArrayList<>();
@@ -102,6 +107,8 @@ public class LevelState extends GameState {
 			checkPlayerCollision();
 			checkPowerupCollision();
 			player.update();
+			
+			sat.update();
 
 			for(Enemy e : enemies)player.enemyBulletCollision(e);
 			for(Meteor m : meteors) m.update();
@@ -223,8 +230,13 @@ public class LevelState extends GameState {
 						}
 						
 						Bullet b = player.bullets.get(i);
-						b.damage -= 10 * m.type;
+						b.damage -= 100 * m.type;
 						if(b.damage <= 0) {
+							if(b.type == 6) {
+								for(int k = 0; k < 10; k++){
+									player.bullets.add(new Bullet(1, player.width, player.height, b.xPos, b.yPos, randInt(0,360)));
+								}
+							}
 							b = null;
 							player.bullets.remove(i);
 							i--;
@@ -320,6 +332,7 @@ public class LevelState extends GameState {
 			}
 		}
 		
+		sat.draw(g2d);
 		
 		//Print GAME OVER and score if gameOver
 		if(gameOver){

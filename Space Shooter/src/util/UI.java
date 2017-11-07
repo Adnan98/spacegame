@@ -77,6 +77,11 @@ public class UI {
 		g2d.drawImage(barHorizontal_shadow_mid, 150, 90, barMaxWidth , barHorizontal_shadow_mid.getHeight() / 2, null);
 		g2d.drawImage(barHorizontal_green_mid, 150, 90, (int)(barMaxWidth * (player.boost/player.maxBoost)), (barHorizontal_green_mid.getHeight() / 2), null);
 		
+		//Draw how many coins the player has
+		g2d.drawImage(coin, Panel.WIDTH - 200, 80, null);
+		g2d.drawString(Integer.toString(LevelState.coins), Panel.WIDTH - 150, 100);
+		
+		
 		for(int i = 0; i < 9; i ++) {
 			int k = i+1;
 			//This if statement checks that the current bullet is not selected so all non-selected bullets can be drawn in low opacity
@@ -84,14 +89,29 @@ public class UI {
 			g2d.drawImage(glassPanel, 10 + (i*100), Panel.HEIGHT-100,  null);
 			g2d.drawString(Integer.toString(k), 20 + (i*100), Panel.HEIGHT-75);
 			
+			if(i == 5) {
+				g2d.drawString("FLARES", 20 + (i*100), Panel.HEIGHT-10);
+			}
+			
 			if(i <= 5) g2d.drawImage(utils.get(i), 50 + (i*100), Panel.HEIGHT-80,null);
+			
+			
 			if(i >= 6) {
 				BufferedImage image = utils.get(i);
-				AffineTransform at = AffineTransform.getTranslateInstance(20 + (i*100), Panel.HEIGHT-80);
+				AffineTransform at = AffineTransform.getTranslateInstance(20 + (i*100), Panel.HEIGHT-90);
 				at.rotate(Math.toRadians((i != 8 ? -45 : 0)), image.getWidth()/2, image.getHeight()/2);
 				double scale = i * 0.1 - 0.1;
 				at.scale(scale, scale);
 				g2d.drawImage(image, at, null);
+				
+				g2d.setFont(Panel.regularFont.deriveFont(Panel.regularFont.getSize() * 0.75f));
+				g2d.drawString(Integer.toString(50 + 25*(i-6)), 80 + (i*100), Panel.HEIGHT-10);
+				
+				AffineTransform at2 = AffineTransform.getTranslateInstance(60 + (i*100), Panel.HEIGHT-20);
+				double scale_coin = 0.5;
+				at2.scale(scale_coin , scale_coin);
+				g2d.drawImage(coin, at2, null);
+
 			}
 			
 			g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.3f));			
@@ -101,14 +121,7 @@ public class UI {
 	        g2d.fill(new Arc2D.Double(700, 50, 50, 50, 90, 360 * extent, Arc2D.PIE));//arguments: x , y, width, height, starting angle, extent
 			g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));//This resets the drawing opacity so everything that follows is drawn normally
 
-		}
-		
-		//Draw how many coins the player has
-		g2d.drawImage(coin, Panel.WIDTH - 200, 80, null);
-		g2d.drawString(Integer.toString(LevelState.coins), Panel.WIDTH - 150, 100);
-		
-		
-	
+		}	
 		
 	}
 	
