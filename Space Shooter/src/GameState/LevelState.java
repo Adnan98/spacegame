@@ -49,9 +49,9 @@ public class LevelState extends GameState {
 	double healthBarMaxWidth = 500;
 
 	int maxMeteor = 100;
-	public static int maxEnemy = 10;
-	public int score = 0;
-	public static int points = 0;
+	public static int maxEnemy = 1;
+	public static double points;
+	public int scoreDivident = 10;
 	public static int time = 0;
 	long startTime;
 	int elapsed;
@@ -59,7 +59,7 @@ public class LevelState extends GameState {
 
 	public LevelState(GameStateManager GSM){
 		this.GSM = GSM;
-		
+
 		try {
 			//Ladda bakgrundsbilden 
 			bg = ImageIO.read(getClass().getResourceAsStream("/Backgrounds/blue.png"));
@@ -69,7 +69,7 @@ public class LevelState extends GameState {
 
 		init();		
 	}
-	
+
 	public static  int getCoins(){
 		return coins;
 	}
@@ -81,20 +81,16 @@ public class LevelState extends GameState {
 		powerups = new ArrayList<>();
 		meteors = new ArrayList<>();
 		enemies = new ArrayList<>();
-		score = points = 0;
+		points = 0;
 		startTime = System.nanoTime();
 		elapsed = 0;
 	}
 
 
 	public void update() {
-		
+
 		if(player.alive){
 			elapsed = (int) ((System.nanoTime() - startTime)/1000000000);
-			
-			while(score < points){
-				score += 1;
-			}
 
 			spawnMeteor();
 			removeMeteor();
@@ -124,6 +120,10 @@ public class LevelState extends GameState {
 
 		else{
 			gameOver = true;
+			if(elapsed*10 != 0) {
+				elapsed -= 0.1;
+				points += 1;
+			}
 		}
 
 	}
@@ -163,6 +163,15 @@ public class LevelState extends GameState {
 	public void spawnEnemy(){
 		if(enemies.size()<maxEnemy){
 
+			//Determine which enemy to spawn:
+		    int i = 1;
+			if(points/scoreDivident % 5  == 0) {
+				if(points/scoreDivident/5 < 6)
+					i += points/500;
+				else i = 7;
+			}
+
+			int enemyType = randInt(1,i);
 			int enemyX = 100;
 
 			while(enemyX > 0 && enemyX < Panel.WIDTH){enemyX = randInt(-worldLimitX, worldLimitX);}
@@ -171,7 +180,7 @@ public class LevelState extends GameState {
 
 			while(enemY > 0 && enemY < Panel.HEIGHT){enemY = randInt(-worldLimitY, worldLimitY);}
 
-			enemy = new Enemy(randInt(1,7), enemyX, enemY, player);
+			enemy = new Enemy(enemyType, enemyX, enemY, player);
 			enemies.add(enemy);
 		}		
 	}
@@ -210,20 +219,20 @@ public class LevelState extends GameState {
 								meteor = new Meteor(m.color, type-1, cx, cy);
 								meteors.add(meteor);
 							}
-							
+
 							if(m.type > 2){
 								powerups.add(new PowerUp(this, randInt(0, (player.boost < player.maxBoost / 4 ? 1 : 0) ), cx, cy));
 							}
-								//The big stones drop new powerups
+							//The big stones drop new powerups
 
 						}		
-						
+
 						else{
 							meteors.remove(x);
 							x--;
 							points += 10;
 						}
-						
+
 						Bullet b = player.bullets.get(i);
 						b.damage -= 100 * m.type;
 						if(b.damage <= 0) {
@@ -266,7 +275,7 @@ public class LevelState extends GameState {
 		}
 
 	}
-	
+
 	public void checkPowerupCollision(){
 		for(int i = 0; i < powerups.size(); i++){
 			PowerUp p = powerups.get(i);
@@ -294,13 +303,13 @@ public class LevelState extends GameState {
 		g2d.setFont(Panel.regularFont.deriveFont(Panel.regularFont.getSize() * 1F));
 
 		g2d.setColor(Color.white);
-		g2d.drawString("Score: "+score / 100, Panel.WIDTH-200, 50);
-		
+		g2d.drawString("Score: "+ (int)points/ scoreDivident, Panel.WIDTH-200, 50);
+
 		for(PowerUp p : powerups){
 			p.draw(g2d);
 		}
-			
-			
+
+
 		for(int i = 0; i < enemies.size(); i++){
 			//Kontrollera ifalll objektet �r utanf�r den synliga delen av planen. Om den �r det hoppar den 
 			//�ver iterationen. Om den �r inuti den synliga delen s� ritas den ut. 
@@ -312,9 +321,9 @@ public class LevelState extends GameState {
 				e.draw(g2d);
 			}
 		}
-		
+
 		player.draw(g2d);
-		
+
 		for(int i = 0; i < meteors.size(); i++){
 			//Kontrollera ifalll objektet �r utanf�r den synliga delen av planen. Om den �r det hoppar den 
 			//�ver iterationen. Om den �r inuti den synliga delen s� ritas den ut. 
@@ -326,18 +335,18 @@ public class LevelState extends GameState {
 				m.draw(g2d);
 			}
 		}
-		
+
 		//Print GAME OVER and score if gameOver
 		if(gameOver){
 			g2d.setFont(Panel.titleFont.deriveFont(Panel.titleFont.getSize() * 4F));
 			drawCenteredText(g2d,"GAME OVER", Panel.WIDTH/2, Panel.HEIGHT/2);
 			g2d.setFont(Panel.regularFont.deriveFont(Panel.regularFont.getSize() * 2F));
-			drawCenteredText(g2d,"Score: "+score / 100, Panel.WIDTH/2, Panel.HEIGHT/2 + 100);
+			drawCenteredText(g2d,"Score: "+ (int) points/scoreDivident, Panel.WIDTH/2, Panel.HEIGHT/2 + 100);
 			g2d.setFont(Panel.regularFont.deriveFont(Panel.regularFont.getSize() * 2F));
 			drawCenteredText(g2d,"Time: "+elapsed +" seconds", Panel.WIDTH/2, Panel.HEIGHT/2 + 150);
 
 			g2d.setFont(Panel.regularFont.deriveFont(Panel.regularFont.getSize() * 1F));
-			drawCenteredText(g2d,"press F5 to restart", Panel.WIDTH/2, Panel.HEIGHT - 30);
+			drawCenteredText(g2d,"press F5 to restart", Panel.WIDTH/2, 30);
 
 		}
 
@@ -354,35 +363,35 @@ public class LevelState extends GameState {
 		if(key == KeyEvent.VK_SHIFT)player.boosting = true;
 		if(key == KeyEvent.VK_SPACE)player.firing = true;
 		//if(key == KeyEvent.VK_DOWN) player.backward = true;
-		
+
 		if(key == KeyEvent.VK_1)player.bulletType = 1;
 		if(key == KeyEvent.VK_2)player.bulletType = 2;
 		if(key == KeyEvent.VK_3)player.bulletType = 3;
 		if(key == KeyEvent.VK_4)player.bulletType = 4;
 		if(key == KeyEvent.VK_5)player.bulletType = 5;
 		if(key == KeyEvent.VK_6)player.bulletType = 6;
-		
+
 		if(key == KeyEvent.VK_7 && coins >=  25){
 			player.satellites.add(new Satellite(1, randInt(0 , Panel.WIDTH - 150), randInt(100, Panel.HEIGHT - 100), this));
 			coins -= 25;
 		}
-		
+
 		if(key == KeyEvent.VK_8 && coins >= 50){
 			player.satellites.add(new Satellite(2, randInt(0 , Panel.WIDTH - 150), randInt(100, Panel.HEIGHT - 100), this));
 			coins -= 50;
 		}
-		
-		
+
+
 		if(key == KeyEvent.VK_9 && coins >= 75){
 			player.assistants.add(new Assistant(randInt(0 , Panel.WIDTH - 150), randInt(100, Panel.HEIGHT - 100), this));
 			coins -= 75;
 		}
-		
+
 		if(key == KeyEvent.VK_F11) {
 			coins = 1000;
 			player.health = 1000000;
 		}
-		
+
 
 		if(gameOver){
 			if(key == KeyEvent.VK_F5){
@@ -414,10 +423,10 @@ public class LevelState extends GameState {
 	}
 
 	protected void drawCenteredText(Graphics2D g2, String s,
-		      float centerX, float baselineY) {
-		    FontRenderContext frc = g2.getFontRenderContext();
-		    Rectangle2D bounds = g2.getFont().getStringBounds(s, frc);
-		    float width = (float) bounds.getWidth();
-		    g2.drawString(s, centerX - width / 2, baselineY);
+			float centerX, float baselineY) {
+		FontRenderContext frc = g2.getFontRenderContext();
+		Rectangle2D bounds = g2.getFont().getStringBounds(s, frc);
+		float width = (float) bounds.getWidth();
+		g2.drawString(s, centerX - width / 2, baselineY);
 	}
 }
