@@ -105,7 +105,7 @@ public class UI {
 				g2d.drawImage(image, at, null);
 				
 				g2d.setFont(Panel.regularFont.deriveFont(Panel.regularFont.getSize() * 0.75f));
-				g2d.drawString(Integer.toString(50 + 25*(i-6)), 80 + (i*100), Panel.HEIGHT-10);
+				g2d.drawString(Integer.toString(25 + 25*(i-6)), 80 + (i*100), Panel.HEIGHT-10);
 				
 				AffineTransform at2 = AffineTransform.getTranslateInstance(60 + (i*100), Panel.HEIGHT-20);
 				double scale_coin = 0.5;

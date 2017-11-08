@@ -16,6 +16,7 @@ import java.util.Random;
 
 import javax.imageio.ImageIO;
 
+import Entity.Assistant;
 import Entity.Bullet;
 import Entity.Enemy;
 import Entity.Meteor;
@@ -48,7 +49,7 @@ public class LevelState extends GameState {
 	double healthBarMaxWidth = 500;
 
 	int maxMeteor = 100;
-	public static int maxEnemy = 2;
+	public static int maxEnemy = 10;
 	public int score = 0;
 	public static int points = 0;
 	public static int time = 0;
@@ -361,13 +362,25 @@ public class LevelState extends GameState {
 		if(key == KeyEvent.VK_5)player.bulletType = 5;
 		if(key == KeyEvent.VK_6)player.bulletType = 6;
 		
-		if(key == KeyEvent.VK_7 && coins >=  0){
+		if(key == KeyEvent.VK_7 && coins >=  25){
 			player.satellites.add(new Satellite(1, randInt(0 , Panel.WIDTH - 150), randInt(100, Panel.HEIGHT - 100), this));
+			coins -= 25;
+		}
+		
+		if(key == KeyEvent.VK_8 && coins >= 50){
+			player.satellites.add(new Satellite(2, randInt(0 , Panel.WIDTH - 150), randInt(100, Panel.HEIGHT - 100), this));
 			coins -= 50;
 		}
 		
-		if(key == KeyEvent.VK_8 && coins >= 75){
-			player.satellites.add(new Satellite(1, randInt(0 , Panel.WIDTH - 150), randInt(100, Panel.HEIGHT - 100), this));
+		
+		if(key == KeyEvent.VK_9 && coins >= 75){
+			player.assistants.add(new Assistant(randInt(0 , Panel.WIDTH - 150), randInt(100, Panel.HEIGHT - 100), this));
+			coins -= 75;
+		}
+		
+		if(key == KeyEvent.VK_F11) {
+			coins = 1000;
+			player.health = 1000000;
 		}
 		
 

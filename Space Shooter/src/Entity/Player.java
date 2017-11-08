@@ -71,6 +71,7 @@ public class Player {
 	public Shield shield;
 
 	public ArrayList<Satellite> satellites;
+	public ArrayList<Assistant> assistants;
 	
 	public Player(LevelState l){
 		alive = true;
@@ -79,6 +80,7 @@ public class Player {
 
 		bullets = new ArrayList<>();
 		satellites = new ArrayList<>();
+		assistants = new ArrayList<>();
 
 		maxHealth = health = 10000;
 		try {
@@ -137,18 +139,8 @@ public class Player {
 		}
 
 		for(Bullet b : bullets) b.update();
-		for(int i = 0; i < satellites.size(); i++) {
-			Satellite s = satellites.get(i);
-			
-			if(s.health <= 0){
-				s = null;
-				satellites.remove(i);
-				i--;
-			}
-			
-			s.update();
-		}
-
+		for(Satellite s : satellites) s.update();
+		for(Assistant a : assistants) a.update();
 
 	}
 
@@ -302,8 +294,7 @@ public class Player {
 
 	public void draw(Graphics2D g2d){	
 		for(Satellite s : satellites)s.draw(g2d);
-
-		
+		for(Assistant a : assistants) a.draw(g2d);
 		try {
 			ui.draw(g2d);
 		} catch (IOException e) {

@@ -36,7 +36,8 @@ public class Enemy {
 
 	ArrayList<EnemyBullet> bullets;
 	private int target;
-
+	Rectangle rpanel;
+	
 	public Enemy(int t, int x, int y, Player p){
 		bullets = new ArrayList<>();
 		player = p;
@@ -140,6 +141,8 @@ public class Enemy {
 			target = randInt(0,1);
 		}
 
+		rpanel = new Rectangle(0,0,Panel.WIDTH,Panel.HEIGHT);//rectangle panel
+
 	}
 
 	public void update(){
@@ -166,7 +169,7 @@ public class Enemy {
 
 		double maxDistanceX = randInt(50 * type, 100 * type); 
 		double maxDistanceY = randInt(50 * type, 100 * type); 		
-		if(Math.abs(dx) > maxDistanceX  && Math.abs(dy) > maxDistanceY){ //|| xPos < 0 || xPos > Panel.WIDTH || yPos < 0 || yPos > Panel.HEIGHT) {
+		if(Math.abs(dx) > maxDistanceX  && Math.abs(dy) > maxDistanceY || !rpanel.contains(getRectangle())){ //) {
 			vx = Math.sin(theta) * speed;
 			vy = Math.cos(theta) * speed;
 		}
@@ -210,7 +213,7 @@ public class Enemy {
 	public void shoot() {
 		for(int i = 0; i < bullets.size(); i++){
 			EnemyBullet b  = bullets.get(i);
-			if(b.xPos < 0 || b.xPos > Panel.WIDTH || b.yPos < 0 || b.yPos > Panel.HEIGHT) {
+			if(b.xPos < -100 || b.xPos > Panel.WIDTH+100 || b.yPos < -100 || b.yPos > Panel.HEIGHT + 100) {
 				bullets.remove(i);
 				i--;
 			}
@@ -287,7 +290,6 @@ public class Enemy {
 		//Denna metod kontrollerar om fiendens skott träffar spelaren
 		for(int i = 0; i < bullets.size(); i++){
 			Rectangle rb = bullets.get(i).getRectangle();//rectangle bullet
-			Rectangle rpanel = new Rectangle(0,0,Panel.WIDTH,Panel.HEIGHT);//rectangle panel
 
 			if(rpanel.contains(rb)){
 				//Only check for bullet collision if bullet is inside screen
@@ -317,6 +319,12 @@ public class Enemy {
 					Rectangle rs = player.satellites.get(0).getRectangle();
 					if(rb.intersects(rs)){
 						player.satellites.get(0).health -= bullets.get(i).damage;
+						
+						if(player.satellites.get(0).health <= 0) {
+							player.satellites.remove(0);
+						}
+						
+						target = 0;
 						bullets.remove(i);
 						i--;
 					}

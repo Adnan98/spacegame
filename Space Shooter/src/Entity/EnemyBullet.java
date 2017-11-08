@@ -41,6 +41,7 @@ public class EnemyBullet {
 		double dx = targetX - xPos;
 		double dy = targetY - yPos;
 		double theta = Math.atan(dx/dy);
+		
 		if(dy > 0) {
 			vx = Math.sin(theta) * speed;
 			vy = Math.cos(theta) * speed;
@@ -66,18 +67,14 @@ public class EnemyBullet {
 	}
 
 	public void update(){
-		move();		
+		xPos += vx;
+		yPos += vy;	
 		
 	}
 
-	public void move(){
-		xPos += vx;
-		yPos += vy;
-	}
-	
 	public void draw(Graphics2D g2d){
 		AffineTransform at = AffineTransform.getTranslateInstance(xPos, yPos);
-		at.rotate(rotate, enemy.width/2, enemy.health/2);
+		at.rotate(rotate, enemy.width/2, enemy.height/2);
 		g2d.drawImage(image,at,null);
 
 	}
