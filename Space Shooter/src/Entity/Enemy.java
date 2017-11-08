@@ -35,6 +35,7 @@ public class Enemy {
 	Player player;
 
 	ArrayList<EnemyBullet> bullets;
+	private int target;
 
 	public Enemy(int t, int x, int y, Player p){
 		bullets = new ArrayList<>();
@@ -53,7 +54,7 @@ public class Enemy {
 
 			width = 106;
 			height =  80;
-			maxHealth = health  = 10;
+			maxHealth = health  = 100;
 			speed = randInt(20,28);
 			break;
 
@@ -64,7 +65,7 @@ public class Enemy {
 
 			width = 101;
 			height =  74;
-			maxHealth = health  = 30;
+			maxHealth = health  = 300;
 			speed = randInt(16,24);
 			break;
 
@@ -75,7 +76,7 @@ public class Enemy {
 
 			width = 100;
 			height =  94;
-			maxHealth = health  = 20;
+			maxHealth = health  = 200;
 			speed = randInt(16,20);
 			break;
 
@@ -86,7 +87,7 @@ public class Enemy {
 
 			width = 126;
 			height =  108;
-			maxHealth = health  = 100;
+			maxHealth = health  = 1000;
 			speed = randInt(12,16);
 			break;
 
@@ -97,7 +98,7 @@ public class Enemy {
 
 			width = 136;
 			height =  84;
-			maxHealth = health  = 80;
+			maxHealth = health  = 800;
 			speed = randInt(8,12);
 			break;
 
@@ -108,7 +109,7 @@ public class Enemy {
 
 			width = 94;
 			height =  148;
-			maxHealth = health  = 90;
+			maxHealth = health  = 900;
 			speed = randInt(4,6);
 			break;
 
@@ -119,7 +120,7 @@ public class Enemy {
 
 			width = 172;
 			height =  151;
-			maxHealth = health  = 150;
+			maxHealth = health  = 1500;
 			speed = 1;
 			break;
 
@@ -133,6 +134,11 @@ public class Enemy {
 			e.printStackTrace();
 		}
 
+		target = 0;
+
+		if(player.satellites.size() > 0){
+			target = randInt(0,1);
+		}
 
 	}
 
@@ -141,8 +147,12 @@ public class Enemy {
 			dead = true;
 		}
 
-		dx = player.xPos - xPos;
-		dy = player.yPos - yPos;
+		if(target == 1 && player.satellites.get(0) == null){
+			target = 0;
+		}
+		
+		dx = (target == 0 ? player.xPos : player.satellites.get(0).xPos) - xPos;
+		dy = (target == 0 ? player.yPos : player.satellites.get(0).yPos) - yPos;
 		moveToPlayer();
 		rotateToPlayer();
 		shoot();
@@ -233,7 +243,10 @@ public class Enemy {
 				centery = yPos -(height )/ 2;
 			}
 
-			EnemyBullet b = new EnemyBullet(this, type, centerx, centery, player);
+			double targetX = (target == 0 ? player.xPos : player.satellites.get(0).xPos);
+			double targetY = (target == 0 ? player.yPos : player.satellites.get(0).yPos);
+
+			EnemyBullet b = new EnemyBullet(this, type, centerx, centery, targetX, targetY);
 			bullets.add(b);
 		}
 	}
@@ -274,29 +287,40 @@ public class Enemy {
 		//Denna metod kontrollerar om fiendens skott träffar spelaren
 		for(int i = 0; i < bullets.size(); i++){
 			Rectangle rb = bullets.get(i).getRectangle();//rectangle bullet
-			Rectangle rp = player.getRectangle();//rectangle player
 			Rectangle rpanel = new Rectangle(0,0,Panel.WIDTH,Panel.HEIGHT);//rectangle panel
-
 
 			if(rpanel.contains(rb)){
 				//Only check for bullet collision if bullet is inside screen
-				if(player.shield != null) {
-					//this means the player has shield activated and cannot take damage, the shield will take damage instead
-					Rectangle rs = player.shield.getRectangle();
-					if(rb.intersects(rs))	{
-						player.shield.health -= bullets.get(i).damage;
-						bullets.remove(i);
-						i--;
+				if(target == 0){
+					Rectangle rp = player.getRectangle();//rectangle player
+
+					if(player.shield != null) {
+						//this means the player has shield activated and cannot take damage, the shield will take damage instead
+						Rectangle rs = player.shield.getRectangle();
+						if(rb.intersects(rs))	{
+							player.shield.health -= bullets.get(i).damage;
+							bullets.remove(i);
+							i--;
+						}
 					}
-				}
-				else {
-					if(rb.intersects(rp)) {
-						player.health -= bullets.get(i).damage;
-						bullets.remove(i);
-						i--;
+					else {
+						if(rb.intersects(rp)) {
+							player.health -= bullets.get(i).damage;
+							bullets.remove(i);
+							i--;
+						}
 					}
+
 				}
 
+				else{
+					Rectangle rs = player.satellites.get(0).getRectangle();
+					if(rb.intersects(rs)){
+						player.satellites.get(0).health -= bullets.get(i).damage;
+						bullets.remove(i);
+						i--;
+					}
+				}
 			}
 
 		}

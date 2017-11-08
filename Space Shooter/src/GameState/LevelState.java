@@ -22,7 +22,7 @@ import Entity.Meteor;
 import Entity.Player;
 import Entity.PowerUp;
 import Entity.Shield;
-import Entity.Sattelite;
+import Entity.Satellite;
 import main.Panel;
 
 public class LevelState extends GameState {
@@ -48,14 +48,13 @@ public class LevelState extends GameState {
 	double healthBarMaxWidth = 500;
 
 	int maxMeteor = 100;
-	public static int maxEnemy = 1;
+	public static int maxEnemy = 2;
 	public int score = 0;
 	public static int points = 0;
 	public static int time = 0;
 	long startTime;
 	int elapsed;
 	public static int coins;
-	Sattelite sat;
 
 	public LevelState(GameStateManager GSM){
 		this.GSM = GSM;
@@ -77,10 +76,7 @@ public class LevelState extends GameState {
 
 	public void init() {
 		coins  = 0;
-		player = new Player();
-		
-		sat = new Sattelite(2, 500, 500, this);
-				
+		player = new Player(this);				
 		powerups = new ArrayList<>();
 		meteors = new ArrayList<>();
 		enemies = new ArrayList<>();
@@ -107,8 +103,6 @@ public class LevelState extends GameState {
 			checkPlayerCollision();
 			checkPowerupCollision();
 			player.update();
-			
-			sat.update();
 
 			for(Enemy e : enemies)player.enemyBulletCollision(e);
 			for(Meteor m : meteors) m.update();
@@ -332,8 +326,6 @@ public class LevelState extends GameState {
 			}
 		}
 		
-		sat.draw(g2d);
-		
 		//Print GAME OVER and score if gameOver
 		if(gameOver){
 			g2d.setFont(Panel.titleFont.deriveFont(Panel.titleFont.getSize() * 4F));
@@ -369,7 +361,16 @@ public class LevelState extends GameState {
 		if(key == KeyEvent.VK_5)player.bulletType = 5;
 		if(key == KeyEvent.VK_6)player.bulletType = 6;
 		
+		if(key == KeyEvent.VK_7 && coins >=  0){
+			player.satellites.add(new Satellite(1, randInt(0 , Panel.WIDTH - 150), randInt(100, Panel.HEIGHT - 100), this));
+			coins -= 50;
+		}
 		
+		if(key == KeyEvent.VK_8 && coins >= 75){
+			player.satellites.add(new Satellite(1, randInt(0 , Panel.WIDTH - 150), randInt(100, Panel.HEIGHT - 100), this));
+		}
+		
+
 		if(gameOver){
 			if(key == KeyEvent.VK_F5){
 				init();

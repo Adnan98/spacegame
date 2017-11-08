@@ -9,9 +9,11 @@ import java.util.ArrayList;
 import java.util.Random;
 
 import javax.imageio.ImageIO;
+
+import main.Panel;
 import GameState.LevelState;
 
-public class Sattelite {
+public class Satellite {
 
 	BufferedImage shadow;
 	BufferedImage filling;
@@ -32,7 +34,7 @@ public class Sattelite {
 	private int dt;
 	private long shootTime;
 
-	public Sattelite(int t, int x, int y, LevelState l){
+	public Satellite(int t, int x, int y, LevelState l){
 		bullets = new ArrayList<>();
 		xPos = x;
 		yPos = y;
@@ -66,6 +68,13 @@ public class Sattelite {
 			break;
 		}
 		
+		try {
+			shadow = ImageIO.read(getClass().getResource("/uipack-space/PNG/barHorizontal_shadow_mid.png"));
+			filling = ImageIO.read(getClass().getResource("/uipack-space/PNG/barHorizontal_green_mid.png"));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
 		shootTime = 0;
 	}
 
@@ -77,6 +86,8 @@ public class Sattelite {
 
 		for(Bullet b : bullets)
 			b.update();
+		
+		checkBulletCollision();
 	}
 
 	public void shoot() {
@@ -85,7 +96,7 @@ public class Sattelite {
 		if((e.yPos - yPos) < 0)
 			theta *= -1;
 		
-		if(dt >= (2+type)) {
+		if(dt >= (4+type)) {
 			bullets.add(new Bullet(
 					2 + type, //THe type of bullet
 					image.getWidth(), //THe width of the sattelite
@@ -97,6 +108,31 @@ public class Sattelite {
 			shootTime = System.nanoTime();
 		}
 	}
+	
+	public void checkBulletCollision(){
+		for(int i = 0; i < bullets.size(); i++){
+			for(int x = 0; x < levelstate.enemies.size(); x++){
+				Enemy e = levelstate.enemies.get(x);//Get the current enemy 
+				Rectangle rb = bullets.get(i).getRectangle();//Get the rectangle of the bullet
+				Rectangle re = e.getRectangle();//Get the rectangle of the enemy
+				Rectangle rp = new Rectangle(0,0,Panel.WIDTH,Panel.HEIGHT);//Get a rectangle representing the window
+
+				if(rp.contains(rb)){
+					//Only check for bullet collision if bullet is inside screen
+					if(rb.intersects(re)){
+						e.getDamage(bullets.get(i).damage);//Cause damage to the enemy
+						
+						bullets.get(i).damage -= 100 * e.type;
+						if(bullets.get(i).damage <= 0) {		
+							bullets.remove(i);
+							i--;
+							
+						}
+					}
+				}
+			}
+		}
+	}
 
 	public void draw(Graphics2D g2d) {
 
@@ -104,14 +140,22 @@ public class Sattelite {
 			b.draw(g2d);
 
 		AffineTransform at = AffineTransform.getTranslateInstance(xPos, yPos);
-		at.rotate(-45, image.getWidth()/2, image.getHeight()/2);
+		at.rotate(Math.toRadians(20), image.getWidth()/2, image.getHeight()/2);
 		g2d.drawImage(image, at, null);
+		
+		//Följande ritar ut health-bar för satelit
+				g2d.drawImage(shadow, (int)xPos, (int)yPos - 10, healthBarMaxWidth , shadow.getHeight() / 4, null);
+				g2d.drawImage(filling, (int)xPos, (int)yPos - 10, (int)(healthBarMaxWidth * (health/maxHealth)), (filling.getHeight() / 4), null);
 	}
 
 	public static int randInt(int min, int max) {
 		Random rand = new Random();
 		int randomNum = min + rand.nextInt((max - min) + 1);
 		return randomNum;
+	}
+	
+	public Rectangle getRectangle() {
+		return new Rectangle((int) xPos, (int) yPos, (int)(image.getWidth()) , (int) (image.getHeight()));
 	}
 
 }

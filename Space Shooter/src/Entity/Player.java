@@ -70,13 +70,15 @@ public class Player {
 	public double dt;
 	public Shield shield;
 
-	public Player(){
-
+	public ArrayList<Satellite> satellites;
+	
+	public Player(LevelState l){
 		alive = true;
 		width = 99;
 		height = 75;
 
 		bullets = new ArrayList<>();
+		satellites = new ArrayList<>();
 
 		maxHealth = health = 10000;
 		try {
@@ -91,7 +93,7 @@ public class Player {
 		ui = new UI(this);
 		bulletType = 1;
 		shield = null;
-
+		
 	}
 
 	public void update(){	
@@ -134,9 +136,18 @@ public class Player {
 			}
 		}
 
-		for(int i = 0; i < bullets.size(); i++){
-			bullets.get(i).update();
-		}	
+		for(Bullet b : bullets) b.update();
+		for(int i = 0; i < satellites.size(); i++) {
+			Satellite s = satellites.get(i);
+			
+			if(s.health <= 0){
+				s = null;
+				satellites.remove(i);
+				i--;
+			}
+			
+			s.update();
+		}
 
 
 	}
@@ -290,6 +301,9 @@ public class Player {
 
 
 	public void draw(Graphics2D g2d){	
+		for(Satellite s : satellites)s.draw(g2d);
+
+		
 		try {
 			ui.draw(g2d);
 		} catch (IOException e) {
@@ -298,16 +312,14 @@ public class Player {
 		}
 
 		//Printa alla skott
-		for(int i = 0; i < bullets.size(); i++){
-			bullets.get(i).draw((Graphics2D) g2d);
-		}
+		for(Bullet b : bullets) b.draw(g2d);
 
 		//printa ut spelaren 
 		AffineTransform at = AffineTransform.getTranslateInstance(xPos, yPos);
 		at.rotate(Math.toRadians(rotateDegrees), width/2, height/2);
 		g2d.drawImage(image,at,null);
 		g2d.drawImage(damage_image,at,null);
-
+		
 		if(shield != null) shield.draw(g2d);
 
 	}

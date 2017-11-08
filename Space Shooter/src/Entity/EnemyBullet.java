@@ -16,17 +16,17 @@ public class EnemyBullet {
 	private boolean hit;
 	private boolean remove;
 	BufferedImage image;
-	Player player;
 	Enemy enemy;
-	double xPos, yPos, vx, vy, rotate;
+	double xPos, yPos, vx, vy, rotate, targetX, targetY;
 	int type, width, height, damage, speed;
 	
-	public EnemyBullet(Enemy enemy, int t, double x, double y, Player  player){
+	public EnemyBullet(Enemy enemy, int t, double x, double y, double tx, double ty){
 		this.xPos = x;
 		this.yPos = y;
-		this.player = player;
 		this.type = t;
 		this.enemy = enemy;
+		this.targetX = tx;
+		this.targetY = ty;
 		
 		damage = 100 * type;
 		speed = 30 - type;
@@ -38,8 +38,8 @@ public class EnemyBullet {
 		width = image.getWidth();
 		height = image.getHeight();
 		
-		double dx = player.xPos - xPos;
-		double dy = player.yPos - yPos;
+		double dx = targetX - xPos;
+		double dy = targetY - yPos;
 		double theta = Math.atan(dx/dy);
 		if(dy > 0) {
 			vx = Math.sin(theta) * speed;
