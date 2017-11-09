@@ -47,7 +47,7 @@ public class Assistant{
 		this.levelstate = l;
 
 		try {
-			image = ImageIO.read(getClass().getResource("/PNG/ufoGreen.png"));
+			image = ImageIO.read(getClass().getResource("/PNG/playerShip3_green.png"));
 			shadow = ImageIO.read(getClass().getResource("/uipack-space/PNG/barHorizontal_shadow_mid.png"));
 			filling = ImageIO.read(getClass().getResource("/uipack-space/PNG/barHorizontal_green_mid.png"));
 		} catch (IOException e) {

@@ -51,7 +51,7 @@ public class LevelState extends GameState {
 	int maxMeteor = 100;
 	public static int maxEnemy = 1;
 	public static double points;
-	public int scoreDivident = 10;
+	public int divident = 10;
 	public static int time = 0;
 	long startTime;
 	int elapsed;
@@ -91,7 +91,11 @@ public class LevelState extends GameState {
 
 		if(player.alive){
 			elapsed = (int) ((System.nanoTime() - startTime)/1000000000);
-
+			
+			if(points/divident > (maxEnemy * 10 * divident)) {
+				maxEnemy++;
+			}
+		
 			spawnMeteor();
 			removeMeteor();
 			spawnEnemy();
@@ -164,14 +168,14 @@ public class LevelState extends GameState {
 		if(enemies.size()<maxEnemy){
 
 			//Determine which enemy to spawn:
-		    int i = 1;
-			if(points/scoreDivident % 5  == 0) {
-				if(points/scoreDivident/5 < 6)
-					i += points/500;
-				else i = 7;
-			}
+			int  maxType = 1;
+		    for(int i = 0; i < 7; i++) {
+		    	if(points/divident > i*5 * divident) {
+		    		maxType = 1 + i;
+		    	}
+		    }
 
-			int enemyType = randInt(1,i);
+			int enemyType = randInt(1, maxType);
 			int enemyX = 100;
 
 			while(enemyX > 0 && enemyX < Panel.WIDTH){enemyX = randInt(-worldLimitX, worldLimitX);}
@@ -303,7 +307,7 @@ public class LevelState extends GameState {
 		g2d.setFont(Panel.regularFont.deriveFont(Panel.regularFont.getSize() * 1F));
 
 		g2d.setColor(Color.white);
-		g2d.drawString("Score: "+ (int)points/ scoreDivident, Panel.WIDTH-200, 50);
+		g2d.drawString("Score: "+ (int)points/ divident, Panel.WIDTH-200, 50);
 
 		for(PowerUp p : powerups){
 			p.draw(g2d);
@@ -341,7 +345,7 @@ public class LevelState extends GameState {
 			g2d.setFont(Panel.titleFont.deriveFont(Panel.titleFont.getSize() * 4F));
 			drawCenteredText(g2d,"GAME OVER", Panel.WIDTH/2, Panel.HEIGHT/2);
 			g2d.setFont(Panel.regularFont.deriveFont(Panel.regularFont.getSize() * 2F));
-			drawCenteredText(g2d,"Score: "+ (int) points/scoreDivident, Panel.WIDTH/2, Panel.HEIGHT/2 + 100);
+			drawCenteredText(g2d,"Score: "+ (int) points/divident, Panel.WIDTH/2, Panel.HEIGHT/2 + 100);
 			g2d.setFont(Panel.regularFont.deriveFont(Panel.regularFont.getSize() * 2F));
 			drawCenteredText(g2d,"Time: "+elapsed +" seconds", Panel.WIDTH/2, Panel.HEIGHT/2 + 150);
 
