@@ -23,13 +23,11 @@ import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-import org.omg.CORBA.portable.InputStream;
-
 import GameState.GameStateManager;
 //import GameState.MouseInput;
 
 
-@SuppressWarnings({ "unused", "serial" })
+@SuppressWarnings({ "unused", "serial", "deprecation" })
 public class Panel extends JPanel implements Runnable, KeyListener, MouseListener{
 	static Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();//Används för att läsa in skärmens storlek
 	//Följande kod läser in skärmens dimensioner

@@ -28,7 +28,7 @@ public class EnemyBullet {
 		this.targetX = tx;
 		this.targetY = ty;
 		
-		damage = 100 * type;
+		damage = 10 * type;
 		speed = 30 - type;
 		
 		try {

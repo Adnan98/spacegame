@@ -25,13 +25,15 @@ import Entity.PowerUp;
 import Entity.Shield;
 import Entity.Satellite;
 import main.Panel;
+import util.PauseMenu;
 
 public class LevelState extends GameState {
 
-	boolean playing;
-	boolean paused;
+	boolean paused = false;
+	boolean started = false;
 	public static boolean gameOver;
 
+	PauseMenu menu;
 	BufferedImage bg;
 	int bgSize = 256;
 
@@ -56,18 +58,18 @@ public class LevelState extends GameState {
 	long startTime;
 	int elapsed;
 	public static int coins;
-
+	
 	public LevelState(GameStateManager GSM){
 		this.GSM = GSM;
-
+		menu = new PauseMenu(GSM);
+		
 		try {
 			//Ladda bakgrundsbilden 
 			bg = ImageIO.read(getClass().getResourceAsStream("/Backgrounds/blue.png"));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
-		init();		
+	
 	}
 
 	public static  int getCoins(){
@@ -76,6 +78,7 @@ public class LevelState extends GameState {
 
 
 	public void init() {
+		started = true;
 		coins  = 0;
 		player = new Player(this);				
 		powerups = new ArrayList<>();
@@ -89,7 +92,7 @@ public class LevelState extends GameState {
 
 	public void update() {
 
-		if(player.alive){
+		if(player.alive && !paused){
 			elapsed = (int) ((System.nanoTime() - startTime)/1000000000);
 			
 			if(points/divident > (maxEnemy * 10 * divident)) {
@@ -122,7 +125,7 @@ public class LevelState extends GameState {
 
 		}
 
-		else{
+		else if(!player.alive){
 			gameOver = true;
 			if(elapsed*10 != 0) {
 				elapsed -= 0.1;
@@ -302,6 +305,14 @@ public class LevelState extends GameState {
 				g2d.drawImage(bg, bgSize * i, bgSize * x, null);
 			}
 		}
+		
+		if(!started) {
+			g2d.setFont(Panel.titleFont.deriveFont(Panel.titleFont.getSize() * 4F));
+			drawCenteredText(g2d,"PRESS ENTER TO START", Panel.WIDTH/2, Panel.HEIGHT/2);
+			
+			g2d.setFont(Panel.regularFont.deriveFont(Panel.regularFont.getSize() * 1F));
+			drawCenteredText(g2d,"press ESC anytime to pause the game", Panel.WIDTH/2, Panel.HEIGHT/2 + 100);
+		}
 
 		//Print out the score: 
 		g2d.setFont(Panel.regularFont.deriveFont(Panel.regularFont.getSize() * 1F));
@@ -340,6 +351,9 @@ public class LevelState extends GameState {
 			}
 		}
 
+		if(paused) menu.draw(g2d);
+		
+
 		//Print GAME OVER and score if gameOver
 		if(gameOver){
 			g2d.setFont(Panel.titleFont.deriveFont(Panel.titleFont.getSize() * 4F));
@@ -360,6 +374,13 @@ public class LevelState extends GameState {
 
 	@Override
 	public void keyPressed(int key) {
+		if(key == KeyEvent.VK_ENTER) init();	
+		
+		if(key == KeyEvent.VK_ESCAPE) {
+			if(paused) paused = false;
+			else paused = true;
+		}
+		
 		if(key == KeyEvent.VK_LEFT) player.left = true;
 		if(key == KeyEvent.VK_RIGHT) player.right = true;
 		if(key == KeyEvent.VK_UP) player.forward = true;	
@@ -375,20 +396,20 @@ public class LevelState extends GameState {
 		if(key == KeyEvent.VK_5)player.bulletType = 5;
 		if(key == KeyEvent.VK_6)player.bulletType = 6;
 
-		if(key == KeyEvent.VK_7 && coins >=  25){
+		if(key == KeyEvent.VK_7 && coins >=  15){
 			player.satellites.add(new Satellite(1, randInt(0 , Panel.WIDTH - 150), randInt(100, Panel.HEIGHT - 100), this));
-			coins -= 25;
+			coins -= 15;
 		}
 
-		if(key == KeyEvent.VK_8 && coins >= 50){
+		if(key == KeyEvent.VK_8 && coins >= 20){
 			player.satellites.add(new Satellite(2, randInt(0 , Panel.WIDTH - 150), randInt(100, Panel.HEIGHT - 100), this));
-			coins -= 50;
+			coins -= 20;
 		}
 
 
-		if(key == KeyEvent.VK_9 && coins >= 75){
+		if(key == KeyEvent.VK_9 && coins >= 25){
 			player.assistants.add(new Assistant(randInt(0 , Panel.WIDTH - 150), randInt(100, Panel.HEIGHT - 100), this));
-			coins -= 75;
+			coins -= 25;
 		}
 
 		if(key == KeyEvent.VK_F11) {

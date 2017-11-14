@@ -93,7 +93,7 @@ public class MenuState extends GameState {
 		//Check if first button is pressed: "Play"
 		if( mouseX > Panel.WIDTH/2 - MenuState.buttonWidth/2 && mouseX < (Panel.WIDTH/2 - MenuState.buttonWidth/2) + MenuState.buttonWidth){
 			if(mouseY > Panel.HEIGHT/2 && mouseY < Panel.HEIGHT/2 + MenuState.buttonHeight){
-				System.out.println("Play");
+				//System.out.println("Play");
 				GSM.setState(GameStateManager.LEVELSTATE);
 			}
 		}
