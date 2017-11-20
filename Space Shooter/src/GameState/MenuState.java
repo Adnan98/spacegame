@@ -101,7 +101,7 @@ public class MenuState extends GameState {
 		//Check if second button is pressed: "Help"
 		if( mouseX > Panel.WIDTH/2 - MenuState.buttonWidth/2 && mouseX < (Panel.WIDTH/2 - MenuState.buttonWidth/2) + MenuState.buttonWidth){
 			if(mouseY > Panel.HEIGHT/2 + MenuState.buttonHeight*2 && mouseY < (Panel.HEIGHT/2 + MenuState.buttonHeight + MenuState.buttonHeight*2)){
-				System.out.println("Help");
+				GSM.setState(GameStateManager.HELPSTATE);
 			}
 		}
 

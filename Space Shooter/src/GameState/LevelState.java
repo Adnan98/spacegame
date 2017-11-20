@@ -1,5 +1,6 @@
 package GameState;
 
+import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.GradientPaint;
 import java.awt.Graphics2D;
@@ -29,7 +30,7 @@ import util.PauseMenu;
 
 public class LevelState extends GameState {
 
-	boolean paused = false;
+	public boolean paused = false;
 	boolean started = false;
 	public static boolean gameOver;
 
@@ -78,6 +79,7 @@ public class LevelState extends GameState {
 
 
 	public void init() {
+		gameOver = false;
 		started = true;
 		coins  = 0;
 		player = new Player(this);				
@@ -299,6 +301,7 @@ public class LevelState extends GameState {
 
 	public void draw(Graphics2D g2d) {
 
+		g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.75f));
 		//Loop through to automatically draw the BG as tiles: First Columns, then Rows
 		for(int i = 0; i < (Panel.WIDTH / bgSize) + 1; i++){
 			for(int x = 0; x < (Panel.HEIGHT/ bgSize) + 1; x++ ){
@@ -355,7 +358,7 @@ public class LevelState extends GameState {
 		
 
 		//Print GAME OVER and score if gameOver
-		if(gameOver){
+		if(gameOver && !paused){
 			g2d.setFont(Panel.titleFont.deriveFont(Panel.titleFont.getSize() * 4F));
 			drawCenteredText(g2d,"GAME OVER", Panel.WIDTH/2, Panel.HEIGHT/2);
 			g2d.setFont(Panel.regularFont.deriveFont(Panel.regularFont.getSize() * 2F));
@@ -398,18 +401,18 @@ public class LevelState extends GameState {
 
 		if(key == KeyEvent.VK_7 && coins >=  15){
 			player.satellites.add(new Satellite(1, randInt(0 , Panel.WIDTH - 150), randInt(100, Panel.HEIGHT - 100), this));
-			coins -= 15;
+			coins -= 5;
 		}
 
 		if(key == KeyEvent.VK_8 && coins >= 20){
 			player.satellites.add(new Satellite(2, randInt(0 , Panel.WIDTH - 150), randInt(100, Panel.HEIGHT - 100), this));
-			coins -= 20;
+			coins -= 10;
 		}
 
 
 		if(key == KeyEvent.VK_9 && coins >= 25){
 			player.assistants.add(new Assistant(randInt(0 , Panel.WIDTH - 150), randInt(100, Panel.HEIGHT - 100), this));
-			coins -= 25;
+			coins -= 15;
 		}
 
 		if(key == KeyEvent.VK_F11) {
@@ -438,7 +441,7 @@ public class LevelState extends GameState {
 	}
 
 	public void mouseClick(int x, int y) {
-		// TODO Auto-generated method stub
+		menu.mouseClick(this, x, y);
 	}
 
 	public static int randInt(int min, int max) {

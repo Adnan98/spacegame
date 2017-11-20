@@ -293,6 +293,7 @@ public class Player {
 
 
 	public void draw(Graphics2D g2d){	
+		
 		for(Satellite s : satellites)s.draw(g2d);
 		for(Assistant a : assistants) a.draw(g2d);
 		try {

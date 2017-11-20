@@ -69,6 +69,7 @@ public class Bullet {
 	}
 
 	public void draw(Graphics2D g2d){
+		
 		AffineTransform at = AffineTransform.getTranslateInstance(xPos, yPos);
 		at.rotate(Math.toRadians(rotate), playerWidth/2, playerHeight/2);
 		g2d.drawImage(image, at, null);
