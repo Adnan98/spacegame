@@ -52,17 +52,18 @@ public class HelpState extends GameState {
         //Loop through to automatically draw the BG as tiles: First Columns, then Rows
         for(int i = 0; i < (Panel.WIDTH / bg.getWidth()) + 1; i++){
             for(int x = 0; x < (Panel.HEIGHT/ bg.getHeight()) + 1; x++ ){
-
                 g2d.drawImage(bg, bg.getWidth() * i, bg.getHeight() * x, null);
 
             }
         }
         
-    	g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
+        g2d.setColor(new Color(0, 0, 0, 137));        
+        g2d.fillRect(0, 0, Panel.WIDTH, Panel.HEIGHT);
+        
         player.draw(g2d);
+       
         g2d.setColor(Color.WHITE);
-
-
+        g2d.drawLine(0, 0, 500, 500);
 
     }
     
@@ -101,7 +102,7 @@ public class HelpState extends GameState {
         if(key == KeyEvent.VK_UP) player.forward = false;    
         if(key == KeyEvent.VK_SHIFT)player.boosting = false;
         if(key == KeyEvent.VK_SPACE)player.firing = false;
-
+        if(key == KeyEvent.VK_DOWN) player.backward = false;    
     }
 
     @Override

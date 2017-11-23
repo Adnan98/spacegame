@@ -130,7 +130,7 @@ public class LevelState extends GameState {
 		else if(!player.alive){
 			gameOver = true;
 			if(elapsed*10 != 0) {
-				elapsed -= 0.1;
+				elapsed -= 1;
 				points += 1;
 			}
 		}
