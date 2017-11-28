@@ -13,6 +13,7 @@ import java.awt.geom.RoundRectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.Random;
 
 import javax.imageio.ImageIO;
@@ -27,6 +28,7 @@ import Entity.Shield;
 import Entity.Satellite;
 import main.Panel;
 import util.PauseMenu;
+import util.Scores;
 
 public class LevelState extends GameState {
 
@@ -35,6 +37,8 @@ public class LevelState extends GameState {
 	public static boolean gameOver;
 
 	PauseMenu menu;
+	Scores scores;
+	private Object[] highscores;
 	BufferedImage bg;
 	int bgSize = 256;
 
@@ -58,6 +62,7 @@ public class LevelState extends GameState {
 	public static int time = 0;
 	long startTime;
 	int elapsed;
+	
 	public static int coins;
 	
 	public LevelState(GameStateManager GSM){
@@ -70,6 +75,8 @@ public class LevelState extends GameState {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		
+		scores = new Scores();
 	
 	}
 
@@ -79,6 +86,8 @@ public class LevelState extends GameState {
 
 
 	public void init() {
+		highscores = scores.loadScores();
+		
 		gameOver = false;
 		started = true;
 		coins  = 0;
@@ -129,7 +138,7 @@ public class LevelState extends GameState {
 
 		else if(!player.alive){
 			gameOver = true;
-			if(elapsed*10 != 0) {
+			if(elapsed != 0) {
 				elapsed -= 1;
 				points += 1;
 			}
@@ -299,6 +308,7 @@ public class LevelState extends GameState {
 	}
 
 
+	@SuppressWarnings("unchecked")
 	public void draw(Graphics2D g2d) {
 
 		g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.75f));
@@ -359,16 +369,38 @@ public class LevelState extends GameState {
 
 		//Print GAME OVER and score if gameOver
 		if(gameOver && !paused){
-			g2d.setFont(Panel.titleFont.deriveFont(Panel.titleFont.getSize() * 4F));
-			drawCenteredText(g2d,"GAME OVER", Panel.WIDTH/2, Panel.HEIGHT/2);
-			g2d.setFont(Panel.regularFont.deriveFont(Panel.regularFont.getSize() * 2F));
-			drawCenteredText(g2d,"Score: "+ (int) points/divident, Panel.WIDTH/2, Panel.HEIGHT/2 + 100);
-			g2d.setFont(Panel.regularFont.deriveFont(Panel.regularFont.getSize() * 2F));
-			drawCenteredText(g2d,"Time: "+elapsed +" seconds", Panel.WIDTH/2, Panel.HEIGHT/2 + 150);
-
 			g2d.setFont(Panel.regularFont.deriveFont(Panel.regularFont.getSize() * 1F));
 			drawCenteredText(g2d,"press F5 to restart", Panel.WIDTH/2, 30);
+			
+			int startX = Panel.HEIGHT/2 - 200;
+			g2d.setFont(Panel.titleFont.deriveFont(Panel.titleFont.getSize() * 4F));
+			drawCenteredText(g2d,"GAME OVER", Panel.WIDTH/2, startX);
+			g2d.setFont(Panel.regularFont.deriveFont(Panel.regularFont.getSize() * 2F));
+			drawCenteredText(g2d,"Score: "+ (int) points/divident, Panel.WIDTH/2, startX + 100);
+			drawCenteredText(g2d,"Time: "+elapsed +" seconds", Panel.WIDTH/2, startX + 150);
+			
+			if(elapsed == 0) {
+				if((int)points/divident > ((Map.Entry<String, Integer>) highscores[0]).getValue()){
+					//This means the the player beat the highcscore. We want to prompt for name and then save the highscore
+					
+					//First display the message that the player beat the highscore:
+					drawCenteredText(g2d,"CONGRATS! NEW HIGHSCORE", Panel.WIDTH/2, startX + 250);
+				}
+				
+				else {
+					drawCenteredText(g2d,"HIGHSCORES", Panel.WIDTH/2, startX + 250);
+					
+					for (int i = 0; i < 3; i++) {
+						drawCenteredText(g2d,
+								((Map.Entry<String, Integer>) highscores[i]).getKey() + ": " + Integer.toString(((Map.Entry<String, Integer>) highscores[i]).getValue()), 
+								
+								Panel.WIDTH/2, 
+								startX + 300 + i * 50);
+					}
+				}
 
+			}			
+			
 		}
 
 
@@ -418,6 +450,10 @@ public class LevelState extends GameState {
 		if(key == KeyEvent.VK_F11) {
 			coins = 1000;
 			player.health = 1000000;
+		}
+		
+		if(key == KeyEvent.VK_F4) {
+			player.health = 0;
 		}
 
 

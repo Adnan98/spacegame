@@ -2,6 +2,7 @@ package GameState;
 
 import java.awt.AlphaComposite;
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.awt.font.FontRenderContext;
@@ -20,6 +21,21 @@ public class HelpState extends GameState {
     GameStateManager GSM;
     BufferedImage bg;
     Player player;
+    String[] instructions = {
+    						"Press key ← to rotate left",
+    						"Press key →  to rotate right",
+    						"Press key ↑ to move forward",
+    						"Press key ↓ to move backwards",
+    						"Press the SPACEBAR to shoot",
+                            "Hold the SHIFT key to shoot",
+                            "Press keys 1 - 6 to select weapon",
+                            "Press keys 7 - 9 to launch utilities",
+                            " ",
+                            " ",
+                            "You have to stay on the field",
+                            "as long as possible"
+                             
+    						};
 
     public HelpState(GameStateManager gsm) {
         this.GSM = gsm;
@@ -63,7 +79,18 @@ public class HelpState extends GameState {
         player.draw(g2d);
        
         g2d.setColor(Color.WHITE);
-        g2d.drawLine(0, 0, 500, 500);
+		g2d.setFont(Panel.titleFont.deriveFont(Panel.titleFont.getSize() * 2.5F));
+		g2d.drawString("TRAINING MODE", 700, 60);
+		g2d.setFont(Panel.titleFont.deriveFont(Panel.titleFont.getSize() * 1F));
+		g2d.drawString("press [ESC] to go back.", 700, 100);
+		g2d.drawString("press [F5] to start game", 700, 120);
+		
+		
+		g2d.setFont(new Font("calibri", Font.PLAIN, 20));
+        for(int i = 0; i < instructions.length; i++) {
+        	g2d.drawString(instructions[i], Panel.WIDTH - 300, 300 + (i * 25));
+        }
+        
 
     }
     
@@ -93,6 +120,8 @@ public class HelpState extends GameState {
         if(key == KeyEvent.VK_5)player.bulletType = 5;
         if(key == KeyEvent.VK_6)player.bulletType = 6;
 
+        if(key == KeyEvent.VK_ESCAPE) GSM.setState(GSM.MENUSTATE);
+        if(key == KeyEvent.VK_F5) GSM.setState(GSM.LEVELSTATE);
     }
 
     @Override
