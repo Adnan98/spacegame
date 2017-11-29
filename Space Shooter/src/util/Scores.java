@@ -18,8 +18,9 @@ import java.util.Map;
 public class Scores {
 
 	String file;
+	Object[] scores;
 /*
- * Denna klass används gör att läsa och mata in högsta poängen i filen highscores.txt
+ * Denna klass anvï¿½nds gï¿½r att lï¿½sa och mata in hï¿½gsta poï¿½ngen i filen highscores.txt
  */
 	public Scores(){
 		file = "scores.txt"; 
@@ -30,7 +31,7 @@ public class Scores {
 		HashMap<String, Integer> map = new HashMap<String, Integer>();
 				
 		try { 
-			//Denna metod läser in highscore från filen och namnet och poängen som lokala variabler
+			//Denna metod lï¿½ser in highscore frï¿½n filen och namnet och poï¿½ngen som lokala variabler
 			FileInputStream fstream = new FileInputStream(file);
 			DataInputStream in = new DataInputStream(fstream);
 			BufferedReader br = new BufferedReader(new InputStreamReader(in));
@@ -53,14 +54,15 @@ public class Scores {
 			    }
 			});
 			
+			scores = obj;
 			return obj;
 		} 
 
-		catch(FileNotFoundException e1) {  //undantag som kan inträffa vid läsning 
-			System.out.println("Filen hittades inte, var god försök igen"); 
+		catch(FileNotFoundException e1) {  //undantag som kan intrï¿½ffa vid lï¿½sning 
+			System.out.println("Filen hittades inte, var god fï¿½rsï¿½k igen"); 
 		}
 
-		catch(IOException e2) {   //undantag som kan inträffa vid läsning 
+		catch(IOException e2) {   //undantag som kan intrï¿½ffa vid lï¿½sning 
 			System.out.println(e2); 
 
 		}
@@ -68,19 +70,19 @@ public class Scores {
 	}
 	
 	
-	public void setScore(String name, int score){
+	public void saveScore(String name, int score){
 
 		try{ 
 			//Mata in highscore i filen
-			FileWriter skrivare = new FileWriter(file); 
-			BufferedWriter bw = new BufferedWriter(skrivare); 
+			FileWriter w = new FileWriter(file, true); //true parameter indicates appending to file
+			BufferedWriter bw = new BufferedWriter(w); 
 			PrintWriter pw = new PrintWriter(bw); 
-			pw.println(name+ "/"+ score);
+			pw.println(name+","+ score);
 			pw.close(); 
 		} 
 
 		catch(IOException e){ 
-			System.out.println("Ett fel uppstod, var god och försök igen."); 
+			System.out.println("Ett fel uppstod, var god och fï¿½rsï¿½k igen."); 
 		} 
 	}
 

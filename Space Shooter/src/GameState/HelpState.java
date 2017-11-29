@@ -88,7 +88,7 @@ public class HelpState extends GameState {
 		
 		g2d.setFont(new Font("calibri", Font.PLAIN, 20));
         for(int i = 0; i < instructions.length; i++) {
-        	g2d.drawString(instructions[i], Panel.WIDTH - 300, 300 + (i * 25));
+        	g2d.drawString(instructions[i], Panel.WIDTH - 500, 300 + (i * 25));
         }
         
 

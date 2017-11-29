@@ -62,7 +62,8 @@ public class LevelState extends GameState {
 	public static int time = 0;
 	long startTime;
 	int elapsed;
-	
+	private String name = "";
+	boolean printed;
 	public static int coins;
 	
 	public LevelState(GameStateManager GSM){
@@ -378,13 +379,15 @@ public class LevelState extends GameState {
 			g2d.setFont(Panel.regularFont.deriveFont(Panel.regularFont.getSize() * 2F));
 			drawCenteredText(g2d,"Score: "+ (int) points/divident, Panel.WIDTH/2, startX + 100);
 			drawCenteredText(g2d,"Time: "+elapsed +" seconds", Panel.WIDTH/2, startX + 150);
+			drawCenteredText(g2d,"Enter your name in the console to save your score", Panel.WIDTH/2, Panel.HEIGHT-50);
 			
 			if(elapsed == 0) {
 				if((int)points/divident > ((Map.Entry<String, Integer>) highscores[0]).getValue()){
 					//This means the the player beat the highcscore. We want to prompt for name and then save the highscore
 					
 					//First display the message that the player beat the highscore:
-					drawCenteredText(g2d,"CONGRATS! NEW HIGHSCORE", Panel.WIDTH/2, startX + 250);
+					drawCenteredText(g2d,"CONGRATS "+name+"! NEW HIGHSCORE", Panel.WIDTH/2, startX + 250);
+					
 				}
 				
 				else {
@@ -398,8 +401,17 @@ public class LevelState extends GameState {
 								startX + 300 + i * 50);
 					}
 				}
+				
+				if(!printed){
+					printed = true;
+					System.out.println("ENTER YOUR NAME: ");
+					name = TextIO.getlnString();
+					scores.saveScore(name, (int)points/divident);
+					System.out.println("Score saved! you can now return to the game window");
+				}
 
-			}			
+			}		
+			
 			
 		}
 

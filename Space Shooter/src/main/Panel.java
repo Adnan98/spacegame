@@ -106,7 +106,6 @@ public class Panel extends JPanel implements Runnable, KeyListener, MouseListene
 			start = System.nanoTime();
 			update();
 			draw();
-			drawToScreen();
 			wait = targetTime;
 			try{
 				Thread.sleep(wait);
@@ -125,14 +124,9 @@ public class Panel extends JPanel implements Runnable, KeyListener, MouseListene
 
 	private void draw() {
 		GSM.draw(g2d);
-
-	}
-
-	private void drawToScreen() {
 		Graphics graphics = getGraphics();
 		graphics.drawImage(image, 0, 0, WIDTH, HEIGHT, null);
 		graphics.dispose();
-
 	}
 
 	@Override

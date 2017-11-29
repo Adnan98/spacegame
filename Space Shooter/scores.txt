@@ -1,2 +1,4 @@
-adnan jamil,-20
-Jhonny,-50
+adnan jamil,557
+Jhonny,697
+Adnan,456
+HEJSAN,34
