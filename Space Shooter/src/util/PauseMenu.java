@@ -11,8 +11,7 @@ import javax.imageio.ImageIO;
  
 import GameState.GameStateManager; 
 import GameState.LevelState; 
-import GameState.MenuState; 
-import main.Background; 
+import GameState.MenuState;
 import main.Panel; 
  
 public class PauseMenu { 

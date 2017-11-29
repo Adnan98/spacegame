@@ -96,7 +96,7 @@ public class Satellite {
 		if((e.yPos - yPos) < 0)
 			theta *= -1;
 		
-		if(dt >= (4+type)) {
+		if(dt >= (1+type)) {
 			bullets.add(new Bullet(
 					2 + type, //THe type of bullet
 					image.getWidth(), //THe width of the sattelite

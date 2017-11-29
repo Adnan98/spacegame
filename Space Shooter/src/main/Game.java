@@ -1,20 +1,17 @@
 package main;
 
-import java.awt.Component;
-
 import javax.swing.JFrame;
-@SuppressWarnings("unused")
 public class Game {
 	
 	public static void main(String[] args){
-		//Denna klassen skapar själva fönstret där spelet körs i
+		//This is the window itself in which the game is run
 		JFrame window = new JFrame();		
 		window.setContentPane( new Panel());//Sätter objektet Panel som innehållet i fönstret. 
 											//På så sätt kan man justera fönstrets storlek i klassen Panel 
 		window.setTitle("SPACE SHOOTER");
 		window.setResizable(true);
 		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		window.setUndecorated(true);//Detta gör att fösntret visas i fullskärmsläge
+		window.setUndecorated(true);//This prevents showing of the exit and minimize buttons and the default OS topbar is hidden
 		window.pack();
 		window.setVisible(true); 
 		window.setLocation(0,0);

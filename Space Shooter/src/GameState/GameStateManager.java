@@ -3,6 +3,10 @@ package GameState;
 import java.util.ArrayList;
 
 public class GameStateManager {
+	/*
+	 * This is the most important class of the game. 
+	 * It is responsible for invoking update and draw functions at the current running class
+	 */
 	
 	private GameState[] gameStates;
 	public int currentState;
@@ -17,10 +21,11 @@ public class GameStateManager {
 		
 		gameStates = new GameState[NUMGAMESTATES];
 		currentState = MENUSTATE;
-		loadState(currentState);
+		loadState(currentState);//Load the current state
 	}
 	
 	public void loadState(int state) {
+		//Create an object for the respective GameState and add it to the 
 		if(state == MENUSTATE)
 			gameStates[state] = new MenuState(this);
 		if(state == LEVELSTATE)

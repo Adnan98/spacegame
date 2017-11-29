@@ -77,7 +77,7 @@ public class Scores {
 			FileWriter w = new FileWriter(file, true); //true parameter indicates appending to file
 			BufferedWriter bw = new BufferedWriter(w); 
 			PrintWriter pw = new PrintWriter(bw); 
-			pw.println(name+","+ score);
+			pw.println(name+","+ score);//writes in the highcore in the file
 			pw.close(); 
 		} 
 

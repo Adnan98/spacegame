@@ -45,8 +45,7 @@ public class Enemy {
 		yPos = y;
 		type = t;
 
-
-
+		//Depending on the type of enemy the attributes are changed
 		switch (type){
 		case 1:
 			try {
@@ -129,15 +128,18 @@ public class Enemy {
 
 
 		try {
+			//Load the health-bar images 
 			shadow = ImageIO.read(getClass().getResource("/uipack-space/PNG/barHorizontal_shadow_mid.png"));
 			filling = ImageIO.read(getClass().getResource("/uipack-space/PNG/barHorizontal_yellow_mid.png"));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 
+		//What to moveto/shoot at
 		target = 0;
 
 		if(player.satellites.size() > 0){
+			//The enemy randomly selects if it wants to shoot at the player or at a sattelite
 			target = randInt(0,1);
 		}
 
@@ -154,6 +156,7 @@ public class Enemy {
 			target = 0;
 		}
 		
+		//get the difference of x and y coordinates from the player to the enemy
 		dx = (target == 0 ? player.xPos : player.satellites.get(0).xPos) - xPos;
 		dy = (target == 0 ? player.yPos : player.satellites.get(0).yPos) - yPos;
 		moveToPlayer();
@@ -165,25 +168,29 @@ public class Enemy {
 
 	private void moveToPlayer() {
 		//Denna funktion kontrollerar vart spelaren �r och f�rflyttar fienden till spelaren
+		//The anlge between the player and the enemy
 		double theta = Math.atan(dx/dy);
 
-		double maxDistanceX = randInt(50 * type, 100 * type); 
-		double maxDistanceY = randInt(50 * type, 100 * type); 		
+		//The maximum distance the enemy can move towards the player
+		double maxDistanceX = randInt(75 * type, 100 * type); 
+		double maxDistanceY = randInt(75 * type, 100 * type); 		
 		if(Math.abs(dx) > maxDistanceX  && Math.abs(dy) > maxDistanceY || !rpanel.contains(getRectangle())){ //) {
+			//If the enemy is id not within the screen or within the maximum distance from the player:
 			vx = Math.sin(theta) * speed;
 			vy = Math.cos(theta) * speed;
 		}
 
 		else if(Math.abs(dx) < maxDistanceX && Math.abs(dy) < maxDistanceY) {
+			//If the enemy is in the zone, it randomly moves around
 			vx = randInt(-5,5);
 			vy = randInt(-5, 5);
-
 		}
 
 		else {
 			vx = vy = 0;
 		}
 
+		//Depending on the position of the player relative to the enemy, we either subrtract or add the vectors to the enemy's position
 		if(dy < 0) {
 			xPos -= vx;
 			yPos -= vy;
@@ -196,6 +203,7 @@ public class Enemy {
 	}
 
 	private void rotateToPlayer() {
+		//This function determines the angle of rotation that makes the enemy face the player
 		double angle = Math.atan(Math.abs(dx)/Math.abs(dy));
 
 		if(dy > 0) {
@@ -212,8 +220,10 @@ public class Enemy {
 
 	public void shoot() {
 		for(int i = 0; i < bullets.size(); i++){
+			//remove/update bullets
 			EnemyBullet b  = bullets.get(i);
 			if(b.xPos < -100 || b.xPos > Panel.WIDTH+100 || b.yPos < -100 || b.yPos > Panel.HEIGHT + 100) {
+				//If the bullet foes outside the screen.
 				bullets.remove(i);
 				i--;
 			}
@@ -224,9 +234,10 @@ public class Enemy {
 		}	
 
 		if(bullets.size() < 1) {
+			
+			//calculate the center coordinates, where the bullet will be created
 			double centerx = xPos;
 			double centery = yPos;
-
 			double rotateDegrees = Math.toDegrees(rotate);
 
 			if(rotateDegrees < 90){
@@ -246,6 +257,7 @@ public class Enemy {
 				centery = yPos -(height )/ 2;
 			}
 
+			//get the targets coordinates
 			double targetX = (target == 0 ? player.xPos : player.satellites.get(0).xPos);
 			double targetY = (target == 0 ? player.yPos : player.satellites.get(0).yPos);
 
@@ -264,7 +276,7 @@ public class Enemy {
 		at.rotate(rotate, width  /2, height  / 2);
 		g2d.drawImage(image, at, null);
 
-		//Följande ritar ut health-bar för fienderna
+		//The following draws a health bar above the enemies
 		g2d.drawImage(shadow, (int)xPos, (int)yPos, healthBarMaxWidth , shadow.getHeight() / 4, null);
 		g2d.drawImage(filling, (int)xPos, (int)yPos, (int)(healthBarMaxWidth * (health/maxHealth)), (filling.getHeight() / 4), null);
 
@@ -305,7 +317,7 @@ public class Enemy {
 							i--;
 						}
 					}
-					else {
+					else {//no shield -> the player will take damage
 						if(rb.intersects(rp)) {
 							player.health -= bullets.get(i).damage;
 							bullets.remove(i);
@@ -316,15 +328,16 @@ public class Enemy {
 				}
 
 				else{
+					//if the enemy is shooting at a sattelite
 					Rectangle rs = player.satellites.get(0).getRectangle();
 					if(rb.intersects(rs)){
 						player.satellites.get(0).health -= bullets.get(i).damage;
 						
 						if(player.satellites.get(0).health <= 0) {
 							player.satellites.remove(0);
+							target = 0;
 						}
 						
-						target = 0;
 						bullets.remove(i);
 						i--;
 					}

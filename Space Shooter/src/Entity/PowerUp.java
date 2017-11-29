@@ -33,6 +33,7 @@ public class PowerUp {
 	}	
 
 	public void collision(){
+		//what the different powerups do when picked up
 		switch(type){
 
 		case 0:

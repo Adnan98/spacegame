@@ -6,6 +6,7 @@ import java.awt.event.KeyEvent;
 import java.awt.font.FontRenderContext;
 import java.awt.geom.Rectangle2D;
 import java.util.Map;
+
 import util.Scores;
 import main.Background;
 import main.Panel;
@@ -18,6 +19,9 @@ public class ScoreState extends GameState {
 	Object[] scores;
 
 	public ScoreState(GameStateManager gsm) {
+		/*
+		 * Here the player can view the top 10 highscores
+		 */
 		this.GSM = gsm;
 
 		try{
@@ -54,13 +58,13 @@ public class ScoreState extends GameState {
 		g2d.setFont(Panel.titleFont.deriveFont(Panel.titleFont.getSize() * 4F));
 		drawCenteredText(g2d,"HIGHSCORES", Panel.WIDTH/2, 300);
 		
-		g2d.setFont(Panel.titleFont.deriveFont(Panel.titleFont.getSize() * 2F));
+		g2d.setFont(Panel.titleFont.deriveFont(Panel.regularFont.getSize() * 1.5F));
 		for (int i = 0; i < 10; i++) {
 			drawCenteredText(g2d,
 					((Map.Entry<String, Integer>) scores[i]).getKey() + ": " + Integer.toString(((Map.Entry<String, Integer>) scores[i]).getValue()), 
 
 					Panel.WIDTH/2, 
-					400 + i * 60);
+					400 + i * 40);
 		}
 
 

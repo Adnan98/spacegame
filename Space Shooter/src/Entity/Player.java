@@ -10,7 +10,7 @@ import java.util.Random;
 
 import javax.imageio.ImageIO;
 
-import util.UI;
+import util.Hud;
 
 import GameState.LevelState;
 import main.Panel;
@@ -21,15 +21,12 @@ public class Player {
 	double yPos = 300;
 	public int width = 99;
 	public int height = 75;
-	double scale = 0.8; 
-	double centerX;
-	double centerY;
 
 	public boolean alive;
 	public double health;
 	public double maxHealth;
 
-	public double fire = 2000;
+	public double fire = 3000;
 	public double maxFire = fire;
 
 	public double boost = 1000;
@@ -42,7 +39,7 @@ public class Player {
 	double stopSpeed = 0.5;
 
 	double rotateDegrees;
-	double rotateSpeed = 2;
+	double rotateSpeed = 3;
 	double maxRotateSpeed = 6;
 	double stopRotateSpeed = 0.2;
 
@@ -63,11 +60,11 @@ public class Player {
 	BufferedImage damage_image_2;
 	BufferedImage damage_image_3;
 
-	long shootTime;
+	long shootTime;//the time when the player shot last
 	public ArrayList<Bullet> bullets;
-	UI ui;
+	Hud hud;//The hud that shows theplayer info
 	public int bulletType;
-	public double dt;
+	public double dt;//Difference in time
 	public Shield shield;
 
 	public ArrayList<Satellite> satellites;
@@ -84,6 +81,7 @@ public class Player {
 
 		maxHealth = health = 10000;
 		try {
+			//Load req the images
 			image = ImageIO.read(getClass().getResourceAsStream("/PNG/playerShip1_green.png"));
 			damage_image_1 = ImageIO.read(getClass().getResourceAsStream("/PNG/Damage/playerShip1_damage1.png"));
 			damage_image_2 = ImageIO.read(getClass().getResourceAsStream("/PNG/Damage/playerShip1_damage2.png"));
@@ -92,9 +90,9 @@ public class Player {
 			e.printStackTrace();
 		}
 
-		ui = new UI(this);
+		hud = new Hud(this);
 		bulletType = 1;
-		shield = null;
+		shield = null;//No shield in the beginning
 		
 	}
 
@@ -110,10 +108,10 @@ public class Player {
 			getRotation();
 			move();
 			keepInsideBounds();
-			fire += 4;
+			fire += 4;//Regain firepower. stop if llimit is reached:
 			if(fire > maxFire) fire = maxFire;
 
-			health += 2;
+			health += 2;//Regain healte
 			if(health>maxHealth)health = maxHealth;
 
 			if(!boosting){//If not boosting, restore speed to original
@@ -124,6 +122,7 @@ public class Player {
 			dt = ((System.nanoTime() / 1000000) - (shootTime / 1000000));
 			shoot();
 
+			//Which damage image to display on top of the player image (depends on the health)
 			if(health <= maxHealth * 3/4 )
 				damage_image = damage_image_1;
 			if(health <= maxHealth * 2/4)
@@ -132,8 +131,10 @@ public class Player {
 				damage_image = damage_image_3;
 
 			if(shield != null) {
+				//the shield slowly degenerates
 				shield.health -= 1;
 				if(shield.health <= 0)
+					//Shield is removed
 					shield = null;
 			}
 		}
@@ -202,6 +203,7 @@ public class Player {
 		}
 
 		else{
+			//Stop rotating if the left or right key is released
 			if(rotateVector > 0){
 				rotateVector -= stopRotateSpeed;
 				if(rotateVector < 0){
@@ -228,6 +230,7 @@ public class Player {
 	}
 
 	public void keepInsideBounds(){
+		//This code prevents the player from going outside the screen
 		if(xPos<0)xPos = 0; 
 		if(xPos > Panel.WIDTH - height) xPos = Panel.WIDTH - height;
 		if(yPos < 0 )yPos = 0;
@@ -247,6 +250,7 @@ public class Player {
 			double centerx = xPos;
 			double centery = yPos;
 
+			//When firing, we need to figure out the center position of the player to create the bullet there
 			if(rotateDegrees < 90){
 				centerx = xPos + width / 2;
 				centery = yPos + height / 2;
@@ -268,7 +272,7 @@ public class Player {
 
 			if(fire > b.cost){
 				if(b.type > 2) {
-					//If the player has selected a missile, it can only shoot one missile every 2 seconds and not as a stream
+					//If the player has selected a missile, it can only shoot one missile every 2-6 seconds and not as a stream
 					if((dt/1000) > b.type) {
 						fire -= b.cost;
 						bullets.add(b); 
@@ -296,8 +300,10 @@ public class Player {
 		
 		for(Satellite s : satellites)s.draw(g2d);
 		for(Assistant a : assistants) a.draw(g2d);
+		
 		try {
-			ui.draw(g2d);
+			//Draws the hud
+			hud.draw(g2d);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -310,7 +316,7 @@ public class Player {
 		AffineTransform at = AffineTransform.getTranslateInstance(xPos, yPos);
 		at.rotate(Math.toRadians(rotateDegrees), width/2, height/2);
 		g2d.drawImage(image,at,null);
-		g2d.drawImage(damage_image,at,null);
+		g2d.drawImage(damage_image,at,null);//draw damage on top
 		
 		if(shield != null) shield.draw(g2d);
 
@@ -330,7 +336,7 @@ public class Player {
 					e.getDamage(bullets.get(i).damage);
 
 					Bullet b = bullets.get(i);
-					b.damage -= 100 * e.type;
+					b.damage -= 100 * e.type;//reduce bullet damage and remove it if it's damage is 0
 					if(b.damage <= 0) {		
 						if(b.type == 6) {
 							for(int x = 0; x < 10; x++){

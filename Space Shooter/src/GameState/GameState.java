@@ -1,6 +1,9 @@
 package GameState;
 
 public abstract class GameState {
+	/*
+	 * This is just a template to ensure consistency between all GameState children
+	 */
 	protected GameStateManager GSM;
 	public abstract void init();
 	public abstract void update();

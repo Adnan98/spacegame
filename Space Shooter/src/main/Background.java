@@ -28,6 +28,7 @@ public class Background {
 		}
 	}
 	public void setPosition(double x, double y){
+		//Move the image starting position
 		this.x = (x * moveScale) % Panel.WIDTH;
 		this.y = (y * moveScale) % Panel.HEIGHT;
 

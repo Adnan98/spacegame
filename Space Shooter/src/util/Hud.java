@@ -15,7 +15,7 @@ import main.Panel;
 import Entity.Player;
 import GameState.LevelState;
 
-public class UI {
+public class Hud {
 	
 	Player player;
 	BufferedImage barHorizontal_shadow_mid;
@@ -27,7 +27,7 @@ public class UI {
 	public ArrayList <BufferedImage> utils;
 	int barMaxWidth = 500;
 	
-	public UI(Player p){
+	public Hud(Player p){
 		this.player = p;
 		utils = new ArrayList<>();
 		
@@ -97,6 +97,7 @@ public class UI {
 			
 			
 			if(i >= 6) {
+				//This draws out all the utilities
 				BufferedImage image = utils.get(i);
 				AffineTransform at = AffineTransform.getTranslateInstance(20 + (i*100), height-90);
 				at.rotate(Math.toRadians((i != 8 ? -45 : 0)), image.getWidth()/2, image.getHeight()/2);
@@ -114,7 +115,8 @@ public class UI {
 
 			}
 			
-			g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.3f));			
+			//The following draws a cooldown timer for misslies
+			g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f));			
 			double extent = 1 - (player.dt/(player.bulletType * 1000));
 			if(player.dt > player.bulletType * 1000 || player.bulletType < 3)
 				extent  = 0;
