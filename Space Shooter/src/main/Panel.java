@@ -7,6 +7,8 @@ import java.awt.Graphics2D;
 import java.awt.GraphicsEnvironment;
 import java.awt.Point;
 import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
@@ -22,29 +24,27 @@ import java.awt.Graphics;
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.Timer;
 
 import GameState.GameStateManager;
 //import GameState.MouseInput;
 
 
 @SuppressWarnings({ "unused", "serial", "deprecation" })
-public class Panel extends JPanel implements Runnable, KeyListener, MouseListener{
+public class Panel extends JPanel implements ActionListener, KeyListener, MouseListener{
 	
 	/*
 	 * THIS CLASS CONTAINS THE PANEL IN WHICH EVERYTHING IS DRAWN AND IT ALSO CREATES AND
 	 * RUNS THE GAME LOOP. 
 	 */
 	
-	
 	static Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();//Används för att läsa in skärmens storlek
 	//Följande kod läser in skärmens STORLEK
 	public static final int WIDTH = (int) screenSize.getWidth();
 	public static final int HEIGHT = (int) screenSize.getHeight();
-	private Thread thread;//An object from the runnable class
+	private long delay = 1000 / 30;//Antalet sekunder som går mellan varje uppdatering av skärmen
+	Timer time = new Timer((int) delay, this);
 	private boolean running;
-	private int FPS = 30;//Antalet uppdatering per sekund
-	private long targetTime = 1000 / FPS;//Antalet sekunder som går mellan varje uppdatering av skärmen
-
 	private BufferedImage image;
 	private Graphics2D g2d;
 
@@ -85,58 +85,37 @@ public class Panel extends JPanel implements Runnable, KeyListener, MouseListene
 
 		} catch (IOException e) {e.printStackTrace();}
 		
+		addKeyListener(this);
 		setFocusable(true);
 		requestFocus();
-	}
+		setFocusTraversalKeysEnabled(false);	
 
-	public void addNotify() {
-		super.addNotify();
-
-		if (thread == null) {
-			//Create a new thread for this panel and then start it
-			thread = new Thread(this);
-			addKeyListener(this);
-			thread.start();
-		}
-	}
-
-	private void init() {
-		//initialize the game loop and create the GSM object
-		image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
-		g2d = (Graphics2D) image.getGraphics();
-		running = true;
 		GSM = new GameStateManager();
+		time.start();
+
 	}
 
-	public void run() {// DETTA ÄR GAME LOOPEN, metoden run(); är ärvd från klassen "Runnable"
-		init();
-		long start;
+	public void actionPerformed(ActionEvent e) {
 		long elapsed;
 		long wait;
-		while (running) {
-			start = System.nanoTime();
-			update();
-			draw();
-			wait = targetTime;//Sleep this many milliseconds between each iteration of the loop
-			try{
-				Thread.sleep(wait);
-			}
-			catch(Exception e){
-				e.printStackTrace();
-			}
-		}
-
+		update();
+		repaint();
 	}
 
 	private void update() {
 		GSM.update();
 	}
 
-	private void draw() {
-		GSM.draw(g2d);
-		Graphics graphics = getGraphics();
-		graphics.drawImage(image, 0, 0, WIDTH, HEIGHT, null);
-		graphics.dispose();
+	public void paint(Graphics g2d) {
+		
+		//image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
+		//g2d = (Graphics2D) image.getGraphics();
+		//Graphics graphics = getGraphics();
+		//graphics.drawImage(image, 0, 0, WIDTH, HEIGHT, null);
+		//graphics.dispose();
+		GSM.draw((Graphics2D) g2d);
+	
+	
 	}
 
 	@Override

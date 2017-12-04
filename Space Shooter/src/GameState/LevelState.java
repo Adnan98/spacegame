@@ -147,11 +147,6 @@ public class LevelState extends GameState {
 
 		else if(!player.alive){
 			gameOver = true;
-			if(elapsed != 0) {
-				//Creates the countdown and add score effect after gameOver
-				elapsed -= (int)elapsed/100;
-				points += 1;
-			}
 		}
 
 	}
@@ -332,7 +327,7 @@ public class LevelState extends GameState {
 	@SuppressWarnings("unchecked")
 	public void draw(Graphics2D g2d) {
 
-		g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.75f));
+		g2d.setColor(Color.white);
 		//Loop through to automatically draw the BG as tiles: First Columns, then Rows
 		for(int i = 0; i < (Panel.WIDTH / bgSize) + 1; i++){
 			for(int x = 0; x < (Panel.HEIGHT/ bgSize) + 1; x++ ){
@@ -350,8 +345,7 @@ public class LevelState extends GameState {
 
 		//Print out the score: 
 		g2d.setFont(Panel.regularFont.deriveFont(Panel.regularFont.getSize() * 1F));
-
-		g2d.setColor(Color.white);
+		
 		g2d.drawString("Score: "+ (int)points/ divident, Panel.WIDTH-200, 50);
 
 		for(PowerUp p : powerups){
