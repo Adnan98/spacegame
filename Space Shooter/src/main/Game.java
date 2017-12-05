@@ -12,7 +12,7 @@ public class Game {
 		window.setResizable(true);
 		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		window.setUndecorated(true);//This prevents showing of the exit and minimize buttons and the default OS topbar is hidden
-		window.pack();
+		window.pack();//Size the window so that all its contents are at or above their preferred sizes. (necessary when not using setSize())
 		window.setVisible(true); 
 		window.setLocation(0,0);
 	}

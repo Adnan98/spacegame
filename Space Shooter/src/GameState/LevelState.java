@@ -33,16 +33,15 @@ public class LevelState extends GameState {
 	 * Moreover there a alot of objects i.e. the player that are managed in the class
 	 */
 
-	public boolean paused;//To check if the player has paused the game
+	public boolean paused;//To check if the player has paused the game (public because need to be accessed from PauseMenu)
 	boolean started = false;//If the player presses enter the game starts
-	public static boolean gameOver;
+	public boolean gameOver;
 
 	PauseMenu menu;
 	Scores scores;
-	private Object[] highscores;//An array of objects for the highscores (which is like a dictionary)
+	Object[] highscores;//An array of objects for the highscores (which is like a dictionary)
 	BufferedImage bg;
-	int bgSize = 256;
-
+	
 	public Player player;
 	Meteor meteor;
 	Enemy enemy;
@@ -55,19 +54,18 @@ public class LevelState extends GameState {
 
 	//THe maximum amount of meteors and enemies possible on the field
 	int maxMeteor = 100;
-	public static int maxEnemy = 1;//The number will be increased later
-	public static double points;
-	public int divident = 10;//THe real score is points/divident
-	public static int time = 0;//current Time
+	public int maxEnemy = 1;//The number will be increased later
+	double points;
+	int divident = 10;//THe real score is points/divident
+	int time = 0;//current Time
 	long startTime;//Start time of the game
 	int elapsed;//How many seconds have elapsed since started
-	public static int coins;//The amont of coins the player has
+	public int coins;//The amont of coins the player has
 
 	public LevelState(GameStateManager GSM){
 		this.GSM = GSM;
 		menu = new PauseMenu(GSM);//create new pausemenu object
 		scores = new Scores();//Create and object for the Score class
-
 
 		try {
 			//Ladda bakgrundsbilden 
@@ -150,9 +148,6 @@ public class LevelState extends GameState {
 		}
 
 	}
-
-
-
 
 	public void spawnMeteor(){
 		if(meteors.size() < maxMeteor){
@@ -269,7 +264,7 @@ public class LevelState extends GameState {
 							if(b.type == 6) {
 								//Only the type 6 missile explodes into smaller bullets
 								for(int k = 0; k < 10; k++){
-									player.bullets.add(new Bullet(1, player.width, player.height, b.xPos, b.yPos, randInt(0,360)));
+									player.bullets.add(new Bullet(1, player.WIDTH, player.HEIGHT, b.xPos, b.yPos, randInt(0,360)));
 								}
 							}
 							b = null;
@@ -328,6 +323,7 @@ public class LevelState extends GameState {
 	public void draw(Graphics2D g2d) {
 
 		g2d.setColor(Color.white);
+		int bgSize = 256;
 		//Loop through to automatically draw the BG as tiles: First Columns, then Rows
 		for(int i = 0; i < (Panel.WIDTH / bgSize) + 1; i++){
 			for(int x = 0; x < (Panel.HEIGHT/ bgSize) + 1; x++ ){

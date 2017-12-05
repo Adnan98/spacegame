@@ -18,6 +18,7 @@ import GameState.LevelState;
 public class Hud {
 	
 	Player player;
+	LevelState levelstate;
 	BufferedImage barHorizontal_shadow_mid;
 	BufferedImage barHorizontal_blue_mid;
 	BufferedImage barHorizontal_green_mid;
@@ -27,10 +28,10 @@ public class Hud {
 	public ArrayList <BufferedImage> utils;
 	int barMaxWidth = 500;
 	
-	public Hud(Player p){
-		this.player = p;
+	public Hud(Player p, LevelState l){
+		player = p;
 		utils = new ArrayList<>();
-		
+		levelstate = l;
 		try {
 			barHorizontal_shadow_mid = ImageIO.read(getClass().getResource("/uipack-space/PNG/barHorizontal_shadow_mid.png"));
 			barHorizontal_blue_mid = ImageIO.read(getClass().getResource("/uipack-space/PNG/barHorizontal_blue_mid.png"));
@@ -79,7 +80,7 @@ public class Hud {
 		
 		//Draw how many coins the player has
 		g2d.drawImage(coin, Panel.WIDTH - 200, 80, null);
-		g2d.drawString(Integer.toString(LevelState.coins), Panel.WIDTH - 150, 100);
+		g2d.drawString(Integer.toString(levelstate.coins), Panel.WIDTH - 150, 100);
 		
 		int height = Panel.HEIGHT - 25;
 		for(int i = 0; i < 9; i ++) {

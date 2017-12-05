@@ -19,8 +19,8 @@ public class Player {
 
 	double xPos = 500;
 	double yPos = 300;
-	public int width = 99;
-	public int height = 75;
+	public final int WIDTH = 99;
+	public final int HEIGHT = 75;
 
 	public boolean alive;
 	public double health;
@@ -64,16 +64,16 @@ public class Player {
 	public ArrayList<Bullet> bullets;
 	Hud hud;//The hud that shows theplayer info
 	public int bulletType;
-	public double dt;//Difference in time
+	public double dt;//Difference in time since last shot
 	public Shield shield;
 
 	public ArrayList<Satellite> satellites;
 	public ArrayList<Assistant> assistants;
+	private LevelState levelState;
 	
 	public Player(LevelState l){
+		levelState = l;
 		alive = true;
-		width = 99;
-		height = 75;
 
 		bullets = new ArrayList<>();
 		satellites = new ArrayList<>();
@@ -90,7 +90,7 @@ public class Player {
 			e.printStackTrace();
 		}
 
-		hud = new Hud(this);
+		hud = new Hud(this, levelState);
 		bulletType = 1;
 		shield = null;//No shield in the beginning
 		
@@ -99,7 +99,7 @@ public class Player {
 	public void update(){	
 		if(health < 0){
 			alive = false;
-			LevelState.gameOver = true;
+			levelState.gameOver = true;
 
 		}
 
@@ -232,9 +232,9 @@ public class Player {
 	public void keepInsideBounds(){
 		//This code prevents the player from going outside the screen
 		if(xPos<0)xPos = 0; 
-		if(xPos > Panel.WIDTH - height) xPos = Panel.WIDTH - height;
+		if(xPos > Panel.WIDTH - HEIGHT) xPos = Panel.WIDTH - HEIGHT;
 		if(yPos < 0 )yPos = 0;
-		if(yPos > Panel.HEIGHT - height) yPos = Panel.HEIGHT - height;
+		if(yPos > Panel.HEIGHT - HEIGHT) yPos = Panel.HEIGHT - HEIGHT;
 		//remove the bullets if they go outside the screen
 		for(int i = 0; i < bullets.size(); i++){
 			Bullet b = bullets.get(i);
@@ -252,23 +252,23 @@ public class Player {
 
 			//When firing, we need to figure out the center position of the player to create the bullet there
 			if(rotateDegrees < 90){
-				centerx = xPos + width / 2;
-				centery = yPos + height / 2;
+				centerx = xPos + WIDTH / 2;
+				centery = yPos + HEIGHT / 2;
 			}
 			if(rotateDegrees > 90 && rotateDegrees < 180){
-				centerx = xPos - width / 2;
-				centery = yPos + height / 2;
+				centerx = xPos - WIDTH / 2;
+				centery = yPos + HEIGHT / 2;
 			}
 			if(rotateDegrees > 180 && rotateDegrees < 270){
-				centerx = xPos - width / 2;
-				centery = yPos - height / 2;
+				centerx = xPos - WIDTH / 2;
+				centery = yPos - HEIGHT / 2;
 			}
 			if(rotateDegrees > 270 && rotateDegrees < 360){
-				centerx = xPos + width / 2;
-				centery = yPos - height / 2;
+				centerx = xPos + WIDTH / 2;
+				centery = yPos - HEIGHT / 2;
 			}
 
-			Bullet b = new Bullet(bulletType, width, height, centerx, centery, rotateDegrees);
+			Bullet b = new Bullet(bulletType, WIDTH, HEIGHT, centerx, centery, rotateDegrees);
 
 			if(fire > b.cost){
 				if(b.type > 2) {
@@ -314,7 +314,7 @@ public class Player {
 
 		//printa ut spelaren 
 		AffineTransform at = AffineTransform.getTranslateInstance(xPos, yPos);
-		at.rotate(Math.toRadians(rotateDegrees), width/2, height/2);
+		at.rotate(Math.toRadians(rotateDegrees), WIDTH/2, HEIGHT/2);
 		g2d.drawImage(image,at,null);
 		g2d.drawImage(damage_image,at,null);//draw damage on top
 		
@@ -340,7 +340,7 @@ public class Player {
 					if(b.damage <= 0) {		
 						if(b.type == 6) {
 							for(int x = 0; x < 10; x++){
-								bullets.add(new Bullet(1, width, height, b.xPos, b.yPos, randInt(0,360)));
+								bullets.add(new Bullet(1, WIDTH, HEIGHT, b.xPos, b.yPos, randInt(0,360)));
 							}
 						}
 						bullets.remove(i);
@@ -355,7 +355,7 @@ public class Player {
 
 
 	public Rectangle getRectangle() {
-		return new Rectangle((int) xPos, (int) yPos, width, height);
+		return new Rectangle((int) xPos, (int) yPos, WIDTH, HEIGHT);
 	}
 
 	public static int randInt(int min, int max) {
