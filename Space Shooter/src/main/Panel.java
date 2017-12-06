@@ -24,6 +24,7 @@ import java.awt.Graphics;
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 import javax.swing.Timer;
 
 import GameState.GameStateManager;
@@ -48,6 +49,7 @@ public class Panel extends JPanel implements ActionListener, KeyListener, MouseL
 	private Graphics2D g2d;
 
 	private GameStateManager GSM;//see class GameStateManager for more information
+	private JTextField input;
 
 	//Variabler för Muspekare och typsnitt 
 	public static Font titleFont;
@@ -72,6 +74,15 @@ public class Panel extends JPanel implements ActionListener, KeyListener, MouseL
 
 		} catch (IOException | FontFormatException e) {e.printStackTrace();}
 
+		input = new JTextField(30);
+		input.setVisible(true);
+		input.setBounds(350,350,300,30);
+		input.setFont(new Font("Calibri", Font.BOLD, 25));
+		input.setText("enter your name");
+		input.addActionListener(this);
+		
+		this.add(input);
+		
 		addMouseListener(this);
 		addKeyListener(this);
 		setFocusable(true);
@@ -93,6 +104,7 @@ public class Panel extends JPanel implements ActionListener, KeyListener, MouseL
 
 	public void paint(Graphics g) {
 		GSM.draw((Graphics2D) g);
+				
 	}
 
 	@Override

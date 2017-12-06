@@ -25,7 +25,7 @@ public class MenuState extends GameState {
 	public static int buttonWidth = 222;
 	public static int buttonHeight = 39;
 
-	public String[] options = {"Start","Help", "Highscores", "Exit"};
+	public String[] options = {"Start","Help","Exit"};
 
 	public MenuState(GameStateManager GSM){       
 		this.GSM = GSM;
@@ -100,12 +100,8 @@ public class MenuState extends GameState {
 			if(mouseY > Panel.HEIGHT/2 + MenuState.buttonHeight*2 && mouseY < (Panel.HEIGHT/2 + MenuState.buttonHeight + MenuState.buttonHeight*2))
 				GSM.setState(GameStateManager.HELPSTATE);
 
-			//Check if third button is pressed: "HighScore"
-			if(mouseY > Panel.HEIGHT/2 + MenuState.buttonHeight*4 && mouseY < (Panel.HEIGHT/2 + MenuState.buttonHeight + MenuState.buttonHeight*4))
-				GSM.setState(GameStateManager.SCORESTATE);
-			
 			//Check if third button is pressed: "Exit"
-			if(mouseY > Panel.HEIGHT/2 + MenuState.buttonHeight*6 && mouseY < (Panel.HEIGHT/2 + MenuState.buttonHeight + MenuState.buttonHeight*6))
+			if(mouseY > Panel.HEIGHT/2 + MenuState.buttonHeight*4 && mouseY < (Panel.HEIGHT/2 + MenuState.buttonHeight + MenuState.buttonHeight*4))
 				System.exit(0);
 			
 		}

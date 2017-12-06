@@ -38,8 +38,6 @@ public class LevelState extends GameState {
 	public boolean gameOver;
 
 	PauseMenu menu;
-	Scores scores;
-	Object[] highscores;//An array of objects for the highscores (which is like a dictionary)
 	BufferedImage bg;
 	
 	public Player player;
@@ -65,7 +63,6 @@ public class LevelState extends GameState {
 	public LevelState(GameStateManager GSM){
 		this.GSM = GSM;
 		menu = new PauseMenu(GSM);//create new pausemenu object
-		scores = new Scores();//Create and object for the Score class
 
 		try {
 			//Ladda bakgrundsbilden 
@@ -82,7 +79,7 @@ public class LevelState extends GameState {
 
 	public void init() {
 		//This function is invoked everytime the player starts a game. Variables are resetted
-		highscores = scores.loadScores();//Load the highscores 
+		//highscores = scores.loadScores();//Load the highscores 
 		paused = false;
 		gameOver = false;
 		started = true;
@@ -389,7 +386,7 @@ public class LevelState extends GameState {
 			g2d.setFont(Panel.regularFont.deriveFont(Panel.regularFont.getSize() * 2F));
 			drawCenteredText(g2d,"Score: "+ (int) points/divident, Panel.WIDTH/2, startX + 100);
 			drawCenteredText(g2d,"Time: "+elapsed +" seconds", Panel.WIDTH/2, startX + 150);
-			drawCenteredText(g2d,"Enter your name in the console to save your score", Panel.WIDTH/2, Panel.HEIGHT-50);
+			/*drawCenteredText(g2d,"Enter your name in the console to save your score", Panel.WIDTH/2, Panel.HEIGHT-50);
 
 			if(elapsed == 0) {
 				String name = "";
@@ -416,7 +413,7 @@ public class LevelState extends GameState {
 				
 				}
 
-			}		
+			}		*/
 
 
 		}
