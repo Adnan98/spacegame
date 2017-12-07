@@ -33,9 +33,9 @@ public class LevelState extends GameState {
 	 * Moreover there a alot of objects i.e. the player that are managed in the class
 	 */
 
-	public boolean paused;//To check if the player has paused the game (public because need to be accessed from PauseMenu)
+	boolean paused;//To check if the player has paused the game (public because need to be accessed from PauseMenu)
 	boolean started = false;//If the player presses enter the game starts
-	public boolean gameOver;
+	boolean gameOver;
 
 	PauseMenu menu;
 	BufferedImage bg;
@@ -52,13 +52,13 @@ public class LevelState extends GameState {
 
 	//THe maximum amount of meteors and enemies possible on the field
 	int maxMeteor = 100;
-	public int maxEnemy = 1;//The number will be increased later
+	int maxEnemy = 1;//The number will be increased later
 	double points;
 	int divident = 10;//THe real score is points/divident
 	int time = 0;//current Time
 	long startTime;//Start time of the game
 	int elapsed;//How many seconds have elapsed since started
-	public int coins;//The amont of coins the player has
+	int coins;//The amont of coins the player has
 
 	public LevelState(GameStateManager GSM){
 		this.GSM = GSM;
@@ -510,5 +510,37 @@ public class LevelState extends GameState {
 		Rectangle2D bounds = g2.getFont().getStringBounds(s, frc);
 		float width = (float) bounds.getWidth();
 		g2.drawString(s, centerX - width / 2, baselineY);
+	}
+
+	public boolean isPaused() {
+		return paused;
+	}
+
+	public void setPaused(boolean paused) {
+		this.paused = paused;
+	}
+
+	public boolean isGameOver() {
+		return gameOver;
+	}
+
+	public void setGameOver(boolean gameOver) {
+		this.gameOver = gameOver;
+	}
+
+	public int getMaxEnemy() {
+		return maxEnemy;
+	}
+
+	public void setMaxEnemy(int maxEnemy) {
+		this.maxEnemy = maxEnemy;
+	}
+
+	public int getCoins() {
+		return coins;
+	}
+
+	public void setCoins(int coins) {
+		this.coins = coins;
 	}
 }

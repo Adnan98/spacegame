@@ -99,7 +99,7 @@ public class Player {
 	public void update(){	
 		if(health < 0){
 			alive = false;
-			levelState.gameOver = true;
+			levelState.setGameOver(true);
 
 		}
 
