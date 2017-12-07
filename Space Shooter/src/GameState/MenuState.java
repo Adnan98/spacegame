@@ -72,6 +72,8 @@ public class MenuState extends GameState {
 
 	protected void drawCenteredText(Graphics2D g2, String s, float centerX, float baselineY) {
 		//This method occurs frequently throughout the program and it is used to draw text at the center of the panel
+		//snippet from:
+		//https://stackoverflow.com/questions/29247833/in-java-graphics2d-how-can-text-be-center-aligned-on-a-rectangle
 		FontRenderContext frc = g2.getFontRenderContext();
 		Rectangle2D bounds = g2.getFont().getStringBounds(s, frc);
 		float width = (float) bounds.getWidth();
